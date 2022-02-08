@@ -6,6 +6,7 @@ typedef struct Neuron{
 	unsigned int nb_weights;
 	signed int weights[];
 	signed int bias;
+	double activation;
 } Neuron;
 
 
@@ -18,9 +19,12 @@ typedef struct Layer{
 typedef struct Network{
 	unsigned int nb_layers;
 	unsigned int sizes[];
-	signed int bias[][][];
-	signed int weights[][][];
+	Layer layers[];
 } Network;
+
+double sigmoid(double x);
+
+double sigmoid_prime(double x);
 
 
 #endif
