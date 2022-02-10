@@ -24,6 +24,8 @@ typedef struct Network{
 
 Network newNetwork(unsigned int sizes[], unsigned int nb_layers);
 
+void feedforward(Network network);
+
 double sigmoid(double x);
 
 double sigmoid_prime(double x);
