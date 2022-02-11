@@ -31,6 +31,8 @@ Network newNetwork(unsigned int sizes[], unsigned int nb_layers);
 
 void initNetwork(Network network);
 
+void freeNetwork(Network network);
+
 
 void feedforward(Network network, double inputs[]);
 
