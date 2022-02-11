@@ -32,7 +32,7 @@ Network newNetwork(unsigned int sizes[], unsigned int nb_layers);
 void initNetwork(Network network);
 
 
-void feedforward(Network network);
+void feedforward(Network network, double inputs[]);
 
 double sigmoid(double x);
 

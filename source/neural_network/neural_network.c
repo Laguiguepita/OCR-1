@@ -69,17 +69,20 @@ void initNetwork(Network network){
 		for(unsigned int j = 0; j < network.layers[i].nb_neurons; j++){
 			for(unsigned int l = 0;
 			l < network.layers[i].neurons[j].nb_weights; l++){
-				network.layers[i].neurons[j].weights[l] = (rand() % 30);
+				network.layers[i].neurons[j].weights[l] =
+				 ((rand() % 10) * (-1 * (rand() % 2)));
 				}
-			network.layers[i].neurons[j].bias = (rand() % 30);
+			network.layers[i].neurons[j].bias =
+			 ((rand() % 10) * (-1 * (rand() % 2)));
 			}
 		}
 	}
 
 
-void feedforward(Network network){
+void feedforward(Network network, double inputs[]){
 	double sum = 0;
-	for(unsigned int i = 1; i < network.nb_layers; i++){
+	// the loop don't go into the first layer and the last layer
+	for(unsigned int i = 1; i < network.nb_layers - 1; i++){
 		for(unsigned int j = 0; j < network.layers[i].nb_neurons; j++){
 			for(unsigned int l = 0;
 			l < network.layers[i].neurons[j].nb_weights; l++){
@@ -90,16 +93,27 @@ void feedforward(Network network){
 				}
 			// add the bias
 			sum += network.layers[i].neurons[j].bias;
-			printf("sum = %f\n", sum);
 			// sigmoid function to the value
 			network.layers[i].neurons[j].activation = sigmoid(sum);
 			sum = 0;
 			}
 		}
+	double *output_tab;
+	output_tab = malloc(sizeof(double) * network.layers[network.nb_layers - 1].nb_neurons);
+	for(unsigned int i = 0; i < network.layers[network.nb_layers - 1].nb_neurons; i++){
+		for(unsigned int j = 0; j < network.layers[network.nb_layers - 1].neurons[i].nb_weights; j++){
+			sum += network.layers[network.nb_layers - 2].neurons[j].activation *
+			 network.layers[network.nb_layers - 1].neurons[i].weights[j];
+			}
+		sum += network.layers[network.nb_layers - 1].neurons[i].bias;
+		output_tab[i] = sum;
+		sum = 0;
+		}
+	softmax(output_tab, network.layers[network.nb_layers - 1].nb_neurons);
 	// I need to add the softmax function somewhere here
 	for(unsigned int i = 0; i < network.layers[network.nb_layers - 1].nb_neurons; i++){
-		printf("the output neuron number %i as activation: %f\n", i,
-		network.layers[network.nb_layers - 1].neurons[i].activation);
+		printf("the output neuron number %i as a probability of: %f\n", i,
+		output_tab[i]);
 		}
 	}
 
