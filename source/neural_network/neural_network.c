@@ -3,7 +3,8 @@
 #include <err.h>
 #include <stddef.h>
 #include <stdlib.h>
-#include "../../include/neural_network/neural_network.h"
+#include <time.h>
+#include "neural_network.h"
 
 Neuron newNeuron(unsigned int nb_weights){
 	Neuron neuron = {
@@ -61,6 +62,19 @@ Network newNetwork(unsigned int sizes[], unsigned int nb_layers){
 	
 	return network;
 	}
+	
+void initNetwork(Network network){
+	srand(time(NULL));
+	for(unsigned int i = 1; i < network.nb_layers; i++){
+		for(unsigned int j = 0; j < network.layers[i].nb_neurons; j++){
+			for(unsigned int l = 0;
+			l < network.layers[i].neurons[j].nb_weights; l++){
+				network.layers[i].neurons[j].weights[l] = (rand() % 30);
+				}
+			network.layers[i].neurons[j].bias = (rand() % 30);
+			}
+		}
+	}
 
 
 void feedforward(Network network){
@@ -76,6 +90,7 @@ void feedforward(Network network){
 				}
 			// add the bias
 			sum += network.layers[i].neurons[j].bias;
+			printf("sum = %f\n", sum);
 			// sigmoid function to the value
 			network.layers[i].neurons[j].activation = sigmoid(sum);
 			sum = 0;
@@ -83,13 +98,13 @@ void feedforward(Network network){
 		}
 	// I need to add the softmax function somewhere here
 	for(unsigned int i = 0; i < network.layers[network.nb_layers - 1].nb_neurons; i++){
-		printf("the output neuron number %i as activation: %f", i,
+		printf("the output neuron number %i as activation: %f\n", i,
 		network.layers[network.nb_layers - 1].neurons[i].activation);
 		}
 	}
 
 double sigmoid(double x){
-	return 1 / (1 +	exp(-1 * x));
+	return 1 / (1 +	(exp(-1 * x)));
 	}
 
 double sigmoid_prime(double x){
@@ -99,10 +114,10 @@ double sigmoid_prime(double x){
 double* softmax(double arr[], int size){
 	double divisor = 0;
 	for(int i = 0; i < size; i++){
-		divisor += exp(arr[i]);
+		divisor += (exp(arr[i]));
 		}
 	for(int i = 0; i < size; i++){
-		arr[i] = exp(arr[i]) / divisor;
+		arr[i] = (exp(arr[i])) / divisor;
 		}
 	return arr;
 	}
