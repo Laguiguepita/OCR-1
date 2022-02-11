@@ -27,7 +27,7 @@ Layer newLayer(unsigned int size, unsigned int previous_layer_size){
 		.neurons = NULL
 		};
 	
-	layer.neurons = malloc(sizeof(Neuron) * previous_layer_size);
+	layer.neurons = malloc(sizeof(Neuron) * size);
 
 	/* create neurons for layer */
 	for(unsigned int i = 0; i < size; i++){
@@ -52,7 +52,6 @@ Network newNetwork(unsigned int sizes[], unsigned int nb_layers){
 			errx(1, "Bad neural network format");
 			}
 		}
-
 	network.layers = malloc(sizeof(Layer) * nb_layers);
 	/* create layers for network */
 	network.layers[0] = newLayer(sizes[0], 0);
@@ -62,7 +61,9 @@ Network newNetwork(unsigned int sizes[], unsigned int nb_layers){
 	
 	return network;
 	}
-	
+
+
+
 void initNetwork(Network network){
 	srand(time(NULL));
 	for(unsigned int i = 1; i < network.nb_layers; i++){
@@ -70,16 +71,19 @@ void initNetwork(Network network){
 			for(unsigned int l = 0;
 			l < network.layers[i].neurons[j].nb_weights; l++){
 				network.layers[i].neurons[j].weights[l] =
-				 ((rand() % 10) * (-1 * (rand() % 2)));
+				 rand() % 10;
 				}
 			network.layers[i].neurons[j].bias =
-			 ((rand() % 10) * (-1 * (rand() % 2)));
+			 rand() % 10;
 			}
 		}
 	}
 
 
 void feedforward(Network network, double inputs[]){
+	for(unsigned int i = 0; i < network.layers[0].nb_neurons; i++){
+	network.layers[0].neurons[i].activation = inputs[i];
+	}
 	double sum = 0;
 	// the loop don't go into the first layer and the last layer
 	for(unsigned int i = 1; i < network.nb_layers - 1; i++){
@@ -99,7 +103,7 @@ void feedforward(Network network, double inputs[]){
 			}
 		}
 	double *output_tab;
-	output_tab = malloc(sizeof(double) * network.layers[network.nb_layers - 1].nb_neurons);
+	output_tab = malloc(sizeof(double) * (network.layers[network.nb_layers - 1].nb_neurons + 1));
 	for(unsigned int i = 0; i < network.layers[network.nb_layers - 1].nb_neurons; i++){
 		for(unsigned int j = 0; j < network.layers[network.nb_layers - 1].neurons[i].nb_weights; j++){
 			sum += network.layers[network.nb_layers - 2].neurons[j].activation *
@@ -112,13 +116,13 @@ void feedforward(Network network, double inputs[]){
 	softmax(output_tab, network.layers[network.nb_layers - 1].nb_neurons);
 	// I need to add the softmax function somewhere here
 	for(unsigned int i = 0; i < network.layers[network.nb_layers - 1].nb_neurons; i++){
-		printf("the output neuron number %i as a probability of: %f\n", i,
+		printf("the output neuron number %i as a probability of: %f\n", i + 1,
 		output_tab[i]);
 		}
 	}
 
 double sigmoid(double x){
-	return 1 / (1 +	(exp(-1 * x)));
+	return 1 / (1 + (exp(-1 * x)));
 	}
 
 double sigmoid_prime(double x){
@@ -126,6 +130,15 @@ double sigmoid_prime(double x){
 	}
 
 double* softmax(double arr[], int size){
+	double max = arr[0];
+	for(int i = 1; i < size; i++){
+		if(max < arr[i]){
+			max = arr[i];
+		}
+	}
+	for(int i = 0; i < size; i++){
+	arr[i] = arr[i] - max;
+	}
 	double divisor = 0;
 	for(int i = 0; i < size; i++){
 		divisor += (exp(arr[i]));
