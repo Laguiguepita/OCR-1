@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <time.h>
-#include "neural_network.h"
+#include "../../include/neural_network/neural_network.h"
 
 Neuron newNeuron(unsigned int nb_weights){
 	Neuron neuron = {
@@ -92,16 +92,19 @@ void freeNetwork(Network network){
 
 
 void feedforward(Network network, double inputs[]){
+	// add the inputs in the neural network
+	unsigned int nb_layers = network.nb_layers;
 	for(unsigned int i = 0; i < network.layers[0].nb_neurons; i++){
 	network.layers[0].neurons[i].activation = inputs[i];
 	}
 	double sum = 0;
+	// proceed to the feedforward for the hiddens layers
 	// the loop don't go into the first layer and the last layer
-	for(unsigned int i = 1; i < network.nb_layers - 1; i++){
+	for(unsigned int i = 1; i < nb_layers - 1; i++){
 		for(unsigned int j = 0; j < network.layers[i].nb_neurons; j++){
 			for(unsigned int l = 0;
 			l < network.layers[i].neurons[j].nb_weights; l++){
-				/* i.e. sum of activation of the neuron in the previous 
+				/* i.e. activation of the neuron in the previous 
 				layer multiply by the weight of the actual neuron */
 				sum += network.layers[i-1].neurons[l].activation *
 				network.layers[i].neurons[j].weights[l];
@@ -113,22 +116,22 @@ void feedforward(Network network, double inputs[]){
 			sum = 0;
 		}
 	}
-	double *output_tab;
-	output_tab = malloc(sizeof(double) * (network.layers[network.nb_layers - 1].nb_neurons + 1));
-	for(unsigned int i = 0; i < network.layers[network.nb_layers - 1].nb_neurons; i++){
-		for(unsigned int j = 0; j < network.layers[network.nb_layers - 1].neurons[i].nb_weights; j++){
-			sum += network.layers[network.nb_layers - 2].neurons[j].activation *
-			 network.layers[network.nb_layers - 1].neurons[i].weights[j];
+	// same as upper but we don't do the sigmoid func
+	for(unsigned int i = 0; i < network.layers[nb_layers - 1].nb_neurons; i++){
+		for(unsigned int j = 0;
+			       j < network.layers[nb_layers - 1].neurons[i].nb_weights;
+			       j++){
+			sum += network.layers[nb_layers - 2].neurons[j].activation *
+			 network.layers[nb_layers - 1].neurons[i].weights[j];
 		}
-		sum += network.layers[network.nb_layers - 1].neurons[i].bias;
-		output_tab[i] = sum;
+		sum += network.layers[nb_layers - 1].neurons[i].bias;
+		network.layers[nb_layers - 1].neurons[i].activation = sum;
 		sum = 0;
 	}
-	softmax(output_tab, network.layers[network.nb_layers - 1].nb_neurons);
-	// I need to add the softmax function somewhere here
-	for(unsigned int i = 0; i < network.layers[network.nb_layers - 1].nb_neurons; i++){
+	softmax(network.layers[nb_layers - 1]);
+	for(unsigned int i = 0; i < network.layers[nb_layers - 1].nb_neurons; i++){
 		printf("the output neuron number %i as a probability of: %f\n", i + 1,
-		output_tab[i]);
+		network.layers[network.nb_layers - 1].neurons[i].activation);
 	}
 }
 
@@ -140,22 +143,23 @@ double sigmoid_prime(double x){
 	return sigmoid(x) * (1 - sigmoid(x));
 }
 
-double* softmax(double arr[], int size){
-	double max = arr[0];
-	for(int i = 1; i < size; i++){
-		if(max < arr[i]){
-			max = arr[i];
+void softmax(Layer layer){
+	unsigned int nb_neurons = layer.nb_neurons;
+	double max = layer.neurons[0].activation;
+	for(unsigned int i = 1; i < nb_neurons; i++){
+		if(max < layer.neurons[i].activation){
+			max = layer.neurons[i].activation;
 		}
 	}
-	for(int i = 0; i < size; i++){
-	arr[i] = arr[i] - max;
+	for(unsigned int i = 0; i < nb_neurons; i++){
+	layer.neurons[i].activation = layer.neurons[i].activation - max;
 	}
 	double divisor = 0;
-	for(int i = 0; i < size; i++){
-		divisor += (exp(arr[i]));
+	for(unsigned int i = 0; i < nb_neurons; i++){
+		divisor += (exp(layer.neurons[i].activation));
 	}
-	for(int i = 0; i < size; i++){
-		arr[i] = (exp(arr[i])) / divisor;
+	for(unsigned int i = 0; i < nb_neurons; i++){
+		layer.neurons[i].activation = 
+			(exp(layer.neurons[i].activation)) / divisor;
 	}
-	return arr;
 }

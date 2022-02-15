@@ -40,7 +40,7 @@ double sigmoid(double x);
 
 double sigmoid_prime(double x);
 
-double* softmax(double arr[], int size);
+void softmax(Layer layer);
 
 
 #endif
