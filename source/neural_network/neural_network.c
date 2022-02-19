@@ -38,6 +38,7 @@ Layer newLayer(unsigned int size, unsigned int previous_layer_size){
 }
 
 Network newNetwork(unsigned int sizes[], unsigned int nb_layers){
+	// init the network values
 	Network network = {
 		.nb_layers = nb_layers,
 		.layers = NULL
@@ -52,6 +53,7 @@ Network newNetwork(unsigned int sizes[], unsigned int nb_layers){
 			errx(1, "Bad neural network format");
 		}
 	}
+	// allocating memory for the layers
 	network.layers = malloc(sizeof(Layer) * nb_layers);
 	// create layers for network
 	network.layers[0] = newLayer(sizes[0], 0);
