@@ -6,41 +6,41 @@
 typedef struct Neuron{
 	unsigned int nb_weights;
 	double bias, activation;
-	double *weights;
+	double* weights;
 } Neuron;
 
-Neuron newNeuron(unsigned int nb_weights);
+Neuron* newNeuron(unsigned int nb_weights);
 
 
 
 typedef struct Layer{
 	unsigned int nb_neurons;
-	Neuron *neurons;
+	Neuron** neurons;
 } Layer;
 
-Layer newLayer(unsigned int size, unsigned int previous_layer_size);
+Layer* newLayer(unsigned int size, unsigned int previous_layer_size);
 
 
 
 typedef struct Network{
 	unsigned int nb_layers;
-	Layer *layers;
+	Layer** layers;
 } Network;
 
-Network newNetwork(unsigned int sizes[], unsigned int nb_layers);
+Network* newNetwork(unsigned int sizes[], unsigned int nb_layers);
 
-void initNetwork(Network network);
+Network* initNetwork(unsigned int sizes[], unsigned int nb_layers);
 
-void freeNetwork(Network network);
+void freeNetwork(Network* network);
 
 
-void feedforward(Network network, double inputs[]);
+void feedforward(Network* network, double inputs[]);
 
 double sigmoid(double x);
 
 double sigmoid_prime(double x);
 
-double* softmax(double arr[], int size);
+void softmax(Layer* layer);
 
 
 #endif
