@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <err.h>
-#include <string.h>
 #include "../../include/neural_network/save_and_load.h"
 
 #define MAX_LENGTH 3000

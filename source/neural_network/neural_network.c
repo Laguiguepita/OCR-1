@@ -1,9 +1,3 @@
-#include <math.h>
-#include <stdio.h>
-#include <err.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <time.h>
 #include "../../include/neural_network/neural_network.h"
 
 Neuron* newNeuron(unsigned int nb_weights){
@@ -11,7 +5,7 @@ Neuron* newNeuron(unsigned int nb_weights){
 	Neuron* neuron = NULL;
 	neuron = malloc(sizeof(Neuron));
 	if(neuron == NULL){
-		errx(1, "Not enough memory!");
+		errx(EXIT_FAILURE, "Not enough memory!");
 	}
 
 	// init the neuron values
@@ -23,7 +17,7 @@ Neuron* newNeuron(unsigned int nb_weights){
 	// allocating memory for the weights
 	neuron->weights = malloc(sizeof(double) * nb_weights);
 	if(neuron->weights == NULL){
-		errx(1, "Not enough memory!");
+		errx(EXIT_FAILURE, "Not enough memory!");
 	}
 
 	// to init weights you should use initNetwork() or loadNetwork function
@@ -37,7 +31,7 @@ Layer* newLayer(unsigned int size, unsigned int previous_layer_size){
 	Layer* layer = NULL;
 	layer = malloc(sizeof(Layer));
 	if(layer == NULL){
-		errx(1, "Not enough memory!");
+		errx(EXIT_FAILURE, "Not enough memory!");
 	}
 
 	// init the layer values
@@ -47,7 +41,7 @@ Layer* newLayer(unsigned int size, unsigned int previous_layer_size){
 	// allocating memory for the neurons
 	layer->neurons = malloc(sizeof(Neuron*) * size);
 	if(layer->neurons == NULL){
-		errx(1, "Not enough memory!");
+		errx(EXIT_FAILURE, "Not enough memory!");
 	}
 
 	// create neurons for layer
@@ -63,7 +57,7 @@ Network* newNetwork(unsigned int sizes[], unsigned int nb_layers){
 	Network* network = NULL;
 	network = malloc(sizeof(Network));
 	if(network == NULL){
-		errx(1, "Not enough memory!");
+		errx(EXIT_FAILURE, "Not enough memory!");
 	}
 
 	// init the network values
@@ -73,18 +67,18 @@ Network* newNetwork(unsigned int sizes[], unsigned int nb_layers){
 	
 	// checking if network has a good format
 	if(nb_layers < 3){
-		errx(1, "Bad neural network format");
+		errx(EXIT_FAILURE, "Bad neural network format");
 	}
 	for(unsigned int i = 0; i < nb_layers; i++){
 		if (sizes[i] == 0){
-			errx(1, "Bad neural network format");
+			errx(EXIT_FAILURE, "Bad neural network format");
 		}
 	}
 
 	// allocating memory for the layers
 	network->layers = malloc(sizeof(Layer*) * nb_layers);
 	if(network->layers == NULL){
-		errx(1, "Not enough memory!");
+		errx(EXIT_FAILURE, "Not enough memory!");
 	}
 
 	// create layers for network
@@ -107,10 +101,12 @@ Network* initNetwork(unsigned int sizes[], unsigned int nb_layers){
 			for(unsigned int l = 0;
 			l < network->layers[i]->neurons[j]->nb_weights; l++){
 				network->layers[i]->neurons[j]->weights[l] =
-				 rand() % 10;
+				 ((double)rand()/(double)(RAND_MAX)) * 3 
+				 * pow(-1, rand() % 2);
 			}
 			network->layers[i]->neurons[j]->bias =
-			 rand() % 10;
+			 ((double)rand()/(double)(RAND_MAX)) * 3
+			 * pow(-1, rand() % 2);
 		}
 	}
 
@@ -130,14 +126,14 @@ void freeNetwork(Network* network){
 }
 
 
-void feedforward(Network* network, double inputs[]){
+void front_propagation(Network* network, double inputs[]){
 	// add the inputs in the neural network
 	unsigned int nb_layers = network->nb_layers;
 	for(unsigned int i = 0; i < network->layers[0]->nb_neurons; i++){
 	network->layers[0]->neurons[i]->activation = inputs[i];
 	}
 	double sum = 0;
-	// proceed to the feedforward for the hiddens layers
+	// proceed to the front_propagation for the hiddens layers
 	// the loop don't go into the first layer and the last layer
 	for(unsigned int i = 1; i < nb_layers - 1; i++){
 		for(unsigned int j = 0; j < network->layers[i]->nb_neurons; j++){
