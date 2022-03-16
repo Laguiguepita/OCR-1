@@ -79,3 +79,88 @@ void update_surface(SDL_Surface* screen, SDL_Surface* image)
 
     SDL_UpdateRect(screen, 0, 0, image->w, image->h);
 }
+
+int* get_neighbours_pixel(SDL_Surface *image,int i,int j){
+	static int neighbours[9]={0,0,0,0,0,0,0,0,0};
+	if(i==0){
+		if(j==0){
+			neighbours[0]=get_pixel(image,i,j+1);
+			neighbours[1]=get_pixel(image,i+1,j);
+			neighbours[2]=get_pixel(image,i+1,j+1);
+		}
+		else if(j==(image->w)-1){
+			neighbours[0]=get_pixel(image,i,j-1);
+			neighbours[1]=get_pixel(image,i+1,j-1);
+			neighbours[2]=get_pixel(image,i+1,j);
+		}
+		else{
+			neighbours[0]=get_pixel(image,i,j-1);
+			neighbours[1]=get_pixel(image,i+1,j-1);
+			neighbours[2]=get_pixel(image,i+1,j);
+			neighbours[3]=get_pixel(image,i+1,j+1);
+			neighbours[4]=get_pixel(image,i,j+1);
+		}
+	}
+	else if(i==(image->h)-1){
+		if(j==0){
+			neighbours[0]=get_pixel(image,i-1,j+1);
+			neighbours[1]=get_pixel(image,i-1,j);
+			neighbours[2]=get_pixel(image,i,j+1);
+		}
+		else if(j==(image->w)-1){
+			neighbours[0]=get_pixel(image,i,j-1);
+			neighbours[1]=get_pixel(image,i-1,j-1);
+			neighbours[2]=get_pixel(image,i-1,j);
+		}
+		else{
+			neighbours[0]=get_pixel(image,i-1,j+1);
+			neighbours[1]=get_pixel(image,i-1,j);
+			neighbours[2]=get_pixel(image,i,j+1);
+			neighbours[3]=get_pixel(image,i-1,j-1);
+			neighbours[4]=get_pixel(image,i,j-1);
+		}
+	}
+	else{
+		if(j==0){
+			neighbours[0]=get_pixel(image,i-1,j);
+			neighbours[1]=get_pixel(image,i-1,j+1);
+			neighbours[2]=get_pixel(image,i,j+1);
+			neighbours[3]=get_pixel(image,i+1,j+1);
+			neighbours[4]=get_pixel(image,i+1,j);
+		}
+		else if(j==(image->w)-1){
+			neighbours[0]=get_pixel(image,i-1,j-1);
+			neighbours[1]=get_pixel(image,i-1,j);
+			neighbours[2]=get_pixel(image,i,j-1);
+			neighbours[3]=get_pixel(image,i+1,j-1);
+			neighbours[4]=get_pixel(image,i+1,j);
+		}
+		else{
+			neighbours[0]=get_pixel(image,i-1,j-1);
+			neighbours[1]=get_pixel(image,i-1,j);
+			neighbours[2]=get_pixel(image,i-1,j+1);
+			neighbours[3]=get_pixel(image,i,j-1);
+			neighbours[4]=get_pixel(image,i,j+1);
+			neighbours[5]=get_pixel(image,i+1,j-1);
+			neighbours[6]=get_pixel(image,i+1,j);
+			neighbours[7]=get_pixel(image,i+1,j+1);
+		}
+	}
+	neighbours[8]=get_pixel(image,i,j);
+	return neighbours;
+}
+void sort_swap(int *array,int size){
+
+	int i,j,k,c;
+	for(i=1;i<size;i++) {
+
+    		if ( array[i] < array[i-1] ) { 
+        		j = 0;
+        		while ( array[j] < array[i] ) j++;
+ 
+ 	c = array[i]; 
+        	for( k = i-1 ; k >= j ; k-- ) array[k+1] = array[k];
+	 array[j] = c; 
+   		 }	
+	}
+}
