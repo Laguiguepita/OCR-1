@@ -28,6 +28,18 @@ int main(){
     brightness(image_surface);
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
+    median_filter(image_surface);
+    update_surface(screen_surface, image_surface);
+    wait_for_keypressed();
+    //aver_filter(image_surface);
+    //update_surface(screen_surface, image_surface);
+    //wait_for_keypressed();
+    otsu_tresholding(image_surface);
+    //update_surface(screen_surface, image_surface);
+    //wait_for_keypressed();
+    binarize(image_surface);
+    update_surface(screen_surface, image_surface);
+    wait_for_keypressed();
     SDL_FreeSurface(image_surface);                                             
     SDL_FreeSurface(screen_surface);
 

@@ -5,8 +5,8 @@
 #include "sdl_functions.h"
 
 void grayscale(SDL_Surface *image_surface){
-	for(int i = 0; i<image_surface->h;i++){                                     
-             for(int j = 0; j<image_surface->w;j++){                             
+	for(int i = 0; i<image_surface->w;i++){                                     
+             for(int j = 0; j<image_surface->h;j++){                             
                      Uint32 pixel = get_pixel(image_surface, i, j);              
                      Uint8 r, g, b;                                              
                      SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);       

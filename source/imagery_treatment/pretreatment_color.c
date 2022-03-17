@@ -83,8 +83,8 @@ int ave(int*array){
 }
 void median_filter(SDL_Surface *image){
 
-	for(int i = 0; i<image->h;i++){
-		for(int j = 0; j<image->w;j++){
+	for(int i = 0; i<image->w;i++){
+		for(int j = 0; j<image->h;j++){
 			int *neighbours=get_neighbours_pixel(image,i,j);
 			sort_swap(neighbours,9);
 			int pixel=median(neighbours);
@@ -142,7 +142,7 @@ int otsu_tresholding(SDL_Surface *image){
 		
 		//Calcul between class variance
 		float varBetween=(float)wB*(float)wF*(mB-mF)*(mB-mF);
-		if(varMax<varBetween){
+		if(varBetween>varMax){
 			varMax=varBetween;
 			treshold=i;
 		}
@@ -152,6 +152,7 @@ int otsu_tresholding(SDL_Surface *image){
 
 void binarize(SDL_Surface *image){
 	int tresh=otsu_tresholding(image);
+	float t=(float) tresh*(6.5/10.0);
 	int black_p=0;
 	int white_p=0;
 	for(int i = 0; i<image->w;i++){
@@ -159,12 +160,12 @@ void binarize(SDL_Surface *image){
 			Uint32 pixel = get_pixel(image, i, j);
 			Uint8 r, g, b;
                         SDL_GetRGB(pixel, image->format, &r, &g, &b);
-			Uint32 bin_p=0;
-			if(r<tresh){
+			Uint32 bin_p=255;
+			if(r<(Uint32)t){
 				black_p++;
+				bin_p=0;
 			}
 			else{
-				bin_p=255;
 				white_p++;
 			}
 			pixel=SDL_MapRGB(image->format,bin_p,bin_p,bin_p);
