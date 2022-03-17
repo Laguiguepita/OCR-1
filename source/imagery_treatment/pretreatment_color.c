@@ -74,6 +74,13 @@ void brightness(SDL_Surface *image){
 int median(int *array){
 	return array[(9-1)/2];
 }
+int ave(int*array){
+	int res=0;
+	for(int i=0;i<9;i++){
+		res+=array[i];
+	}
+	return res/9;
+}
 void median_filter(SDL_Surface *image){
 
 	for(int i = 0; i<image->h;i++){
@@ -85,6 +92,107 @@ void median_filter(SDL_Surface *image){
 		}
 	}
 }
+
+
+void aver_filter(SDL_Surface *image){
+
+	for(int i = 0; i<image->h;i++){
+		for(int j = 0; j<image->w;j++){
+			int *neighbours=get_neighbours_pixel(image,i,j);
+			sort_swap(neighbours,9);
+			int pixel=ave(neighbours);
+			put_pixel(image,i,j,(Uint32)pixel);
+		}
+	}
+}
+
+int otsu_tresholding(SDL_Surface *image){
+	float histogram[256]={0.0f};
+	for(int i = 0; i<image->w;i++){
+		for(int j = 0; j<image->h;j++){
+			Uint32 pixel = get_pixel(image, i, j);
+			Uint8 r, g, b;
+                        SDL_GetRGB(pixel, image->format, &r, &g, &b);
+			size_t grey=r;
+			histogram[grey]+=1;
+		}
+	}
+	int tot_pix=(image->w)*(image->h);
+	float sum=0;
+	for(int i=0; i<256;i++){
+		sum+=i*histogram[i];
+	}
+	float sumB=0;
+	int wB=0;
+	int wF=0;
+	float varMax=0;
+	int treshold=0;
+	for(int i=0;i<256;i++){
+		wB+=histogram[i];   //weight background
+		if(wB==0){
+			continue;
+		}
+		wF=tot_pix - wB;    //weight foreground
+		if(wF==0){
+			break;
+		}
+		sumB+=(float)(i*histogram[i]);
+		float mB=sumB/wB;   //mean background
+		float mF=(sum-sumB)/wF;  //mean foreground
+		
+		//Calcul between class variance
+		float varBetween=(float)wB*(float)wF*(mB-mF)*(mB-mF);
+		if(varMax<varBetween){
+			varMax=varBetween;
+			treshold=i;
+		}
+	}
+	return treshold;
+}
+
+void binarize(SDL_Surface *image){
+	int tresh=otsu_tresholding(image);
+	int black_p=0;
+	int white_p=0;
+	for(int i = 0; i<image->w;i++){
+		for(int j = 0; j<image->h;j++){
+			Uint32 pixel = get_pixel(image, i, j);
+			Uint8 r, g, b;
+                        SDL_GetRGB(pixel, image->format, &r, &g, &b);
+			Uint32 bin_p=0;
+			if(r<tresh){
+				black_p++;
+			}
+			else{
+				bin_p=255;
+				white_p++;
+			}
+			pixel=SDL_MapRGB(image->format,bin_p,bin_p,bin_p);
+			put_pixel(image,i,j,pixel);
+
+		}
+	}
+	if(black_p>white_p){
+		for(int i = 0; i<image->w;i++){
+			for(int j = 0; j<image->h;j++){
+				Uint32 pixel = get_pixel(image, i, j);
+				Uint8 r, g, b;
+                        	SDL_GetRGB(pixel, image->format, &r, &g, &b);
+				Uint32 bin_p=0;
+				if(r==0){
+					bin_p=255;
+				}
+				pixel=SDL_MapRGB(image->format,bin_p,bin_p,
+				bin_p);
+				put_pixel(image,i,j,pixel);
+			}
+		}
+	}
+}
+
+
+
+
 
 
 
