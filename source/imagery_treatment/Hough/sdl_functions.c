@@ -66,4 +66,56 @@ void wait_for_keypressed()
 }
 
 void SDL_FreeSurface(SDL_Surface *surface);
+void draw_pixel(SDL_Surface *surface, int x, int y, Uint32 color) {
+        // 32bpp pixel address
+        Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * 4;
+        // assign color
+        *(Uint32 *)p = color;
+}
 
+
+void swap(int *i, int *j) {
+        int t = *i;
+        *i = *j;
+        *j = t;
+}
+void draw_line(SDL_Surface *surface,int x1,int y1,int x2,int y2, Uint32 color)
+{
+        // bresenham line
+        steep = fabs(y2 - y1) > fabs(x2 - x1),
+        inc = -1;
+
+        if (steep) {
+                swap(&x1, &y1);
+                swap(&x2, &y2);
+        }
+
+        if (x1 > x2) {
+                swap(&x1,&x2);
+                swap(&y1,&y2);
+        }
+
+        if (y1 < y2) {
+                inc = 1;
+        }
+
+        int dx = fabs(x2 - x1),
+            dy = fabs(y2 - y1),
+            y = y1, x = x1,
+            e = 0;
+
+        for (x; x <= x2; x++) {
+                if (steep) {
+                        draw_pixel(surface, y, x, color);
+                } else {
+                        draw_pixel(surface, x, y, color);
+                }
+
+                if ((e + dy) << 1 < dx) {
+                        e = e + dy;
+                } else {
+                        y += inc;
+                        e = e + dy - dx;
+                }
+        }
+}
