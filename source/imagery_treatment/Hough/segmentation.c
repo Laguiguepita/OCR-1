@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "sdl_functions.h"
+#include "pixel_operations.h"
+#include "SDL/SDL_image.h"
+#include "SDL/SDL.h"
 
 #define PI 3.14159265358979
 
@@ -21,10 +24,14 @@ int **hought_transform(SDL_Surface *image){
 	for(int i = 0; i<Ntheta;i++)
         	for (int j =0 ; j<Nrho ;j++)
             		accum[i][j]=0.;
+	
+	
+	
+	
 
 	for(int i =0;i<width;i++){
 		for(int j=0;j<height;j++){
-			if(array[i][j]!=0){
+			if(get_pixel(image, i, j) != 0){
 				for(int i_theta=0;i<Ntheta;i++){
 					theta=i_theta*Dtheta;
 					rho=i*cos(theta)+(width-i)*sin(theta);
@@ -46,7 +53,7 @@ int **hought_transform(SDL_Surface *image){
 	for(int i_theta=0;i_theta<Ntheta;i_theta++){
 		for(int i_rho=0;i_rho<Nrho;i_rho++){
 			if(accum[i_theta][i_rho]<seuil){
-				accum_seuil[i_theta][i_rho];
+				accum_seuil[i_theta][i_rho] += 1;
 				}
 		}
 	}
