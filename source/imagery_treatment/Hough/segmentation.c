@@ -10,10 +10,10 @@
 
 #define PI 3.14159265358979
 
-int **hought_transform(SDL_Surface *image){
+void hough_transform(SDL_Surface *image){
 	int width=image->w;
 	int height=image->h;
-	SDL_Surface *copy_image=*image;
+	SDL_Surface *copy_image=image;
 	double diagonal=sqrt(width*width+height*height);
 	double rho=1.0;
 	double theta=1.0;

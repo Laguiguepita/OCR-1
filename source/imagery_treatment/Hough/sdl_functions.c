@@ -2,7 +2,7 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 #include "pixel_operations.h"
-
+#include <math.h>
 void init_sdl()
 {
     // Init only the video part.
@@ -82,8 +82,8 @@ void swap(int *i, int *j) {
 void draw_line(SDL_Surface *surface,int x1,int y1,int x2,int y2, Uint32 color)
 {
         // bresenham line
-        steep = fabs(y2 - y1) > fabs(x2 - x1),
-        inc = -1;
+        int steep = fabs((float)y2 -(float)y1) > fabs((float)x2 -(float)x1);
+        int inc = -1;
 
         if (steep) {
                 swap(&x1, &y1);
@@ -99,21 +99,23 @@ void draw_line(SDL_Surface *surface,int x1,int y1,int x2,int y2, Uint32 color)
                 inc = 1;
         }
 
-        int dx = fabs(x2 - x1),
-            dy = fabs(y2 - y1),
-            y = y1, x = x1,
-            e = 0;
+        int dx = fabs((float)x2 -(float)x1);
+        int dy = fabs((float)y2 - (float)y1);
+        int y = y1, x = x1;
+        int e = 0;
 
-        for (x; x <= x2; x++) {
+        for (x=x1; x <= x2; x++) {
                 if (steep) {
                         draw_pixel(surface, y, x, color);
-                } else {
+                } 
+		else {
                         draw_pixel(surface, x, y, color);
                 }
 
                 if ((e + dy) << 1 < dx) {
                         e = e + dy;
-                } else {
+                }
+		else {
                         y += inc;
                         e = e + dy - dx;
                 }
