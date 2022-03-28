@@ -13,7 +13,7 @@ void wait_for_keypressed();
 void SDL_FreeSurface(SDL_Surface *surface); 
 void draw_pixel(SDL_Surface *surface, int x, int y, Uint32 color);
 void swap(int *i, int *j);
-void draw_line(SDL_Surface *surface,int x1,int y1,int x2,int y2, Uint32 color);  
+void draw_line(SDL_Surface *surface,int x1,int y1,int x2,int y2);  
 
 
 

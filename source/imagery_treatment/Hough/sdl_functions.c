@@ -79,12 +79,12 @@ void swap(int *i, int *j) {
         *i = *j;
         *j = t;
 }
-void draw_line(SDL_Surface *surface,int x1,int y1,int x2,int y2, Uint32 color)
+void draw_line(SDL_Surface *surface,int x1,int y1,int x2,int y2)
 {
         // bresenham line
         int steep = fabs((float)y2 -(float)y1) > fabs((float)x2 -(float)x1);
         int inc = -1;
-
+	Uint32 color=SDL_MapRGB(surface->format,255,0,0);
         if (steep) {
                 swap(&x1, &y1);
                 swap(&x2, &y2);
@@ -106,10 +106,10 @@ void draw_line(SDL_Surface *surface,int x1,int y1,int x2,int y2, Uint32 color)
 
         for (x=x1; x <= x2; x++) {
                 if (steep) {
-                        draw_pixel(surface, y, x, color);
+                        put_pixel(surface, y, x, color);
                 } 
 		else {
-                        draw_pixel(surface, x, y, color);
+                        put_pixel(surface, x, y, color);
                 }
 
                 if ((e + dy) << 1 < dx) {
