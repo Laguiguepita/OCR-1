@@ -11,7 +11,7 @@
 #define PI 3.14159265358979
 
 
-void append(List *list, Line *ligne)
+void append(MyList *list, Line *ligne)
 {
     if (list->head == NULL)
     {
@@ -30,6 +30,9 @@ void append(List *list, Line *ligne)
 
 Line *initLine(void *x,void *y,void *xx,void *yy){
 	Line *ligne = (Line *)malloc(sizeof(Line));
+    	if (ligne == NULL)
+        errx(1, "Initialize Node: not enough memory");
+		
 		ligne->x1=x;
 		ligne->y1=y;
 		ligne->x2=xx;
@@ -39,21 +42,28 @@ Line *initLine(void *x,void *y,void *xx,void *yy){
 	return ligne;
 }
 
-List *initList()
+void initializeMyList(MyList *list)
 {
-	List *liste=(List *)malloc(sizeof(List));
-        liste->head = NULL;
-        liste->tail = NULL;
-        liste->length = 0;
-	return liste;
+        list->head = NULL;
+        list->tail = NULL;
+        list->length = 0;
 }
 
-unsigned int **initMatrix(unsigned int x, unsigned int y)
+unsigned int **initMatrice(unsigned int x, unsigned int y)
 {
     unsigned int **matrice = NULL;
     matrice = calloc(y + 1, sizeof(unsigned int *));
-    for (size_t j = 0; j < y; j++){
+    if (matrice == NULL)
+    {
+        errx(1, "Memory error");
+    }
+    for (size_t j = 0; j < y; j++)
+    {
         matrice[j] = calloc(x + 1, sizeof(unsigned int));
+        if (matrice[j] == NULL)
+        {
+            errx(1, "Memory error");
+        }
     }
     return matrice;
 }
@@ -109,7 +119,7 @@ void hough_transform(SDL_Surface *image){
     	}
 	
 	printf("ok,%f,%d\n",nbTheta+1,(int)nbTheta+1);
-	unsigned int **accum=initMatrix(nbTheta+1,nbRho+1); 
+	unsigned int **accum=initMatrice(nbTheta+1,nbRho+1); 
     	//unsigned int accum[(size_t)nbTheta+1][(size_t)(nbRho+1)];
 	//memset(accum,0,(nbTheta+1)*(nbRho+1)*sizeof(unsigned int)); 
 	/*for(int p = 0; p<3000;p++){
@@ -153,7 +163,7 @@ void hough_transform(SDL_Surface *image){
 		}
 	}*/
 	printf("ok\n");
-	List *line_tab=initList();
+	MyList line_tab={NULL,NULL,0};
 	/*for(int i =0;i<taille;i++){
 		for(int j=0;j<4;j++){
 			line_tab[i][j]=0;
@@ -246,7 +256,7 @@ void hough_transform(SDL_Surface *image){
                     		draw_line(image,x1,y1,x2,y2);
 				int *x=&x1,*y=&y1,*xx=&x2,*yy=&y2;
 				Line *line=initLine(x,y,xx,yy);
-				append(line_tab,line);
+				append(&line_tab,line);
 				/*printf("test8\n");
 				line_tab[tt][0]=x1;
 				printf("test9\n");

@@ -10,16 +10,17 @@ typedef struct Line_t
     struct Line_t *next;
     struct Line_t *prev;
 } Line;
+
 typedef struct
 {
     Line *head;
     Line *tail;
     size_t length;
-} MyList;
+} List;
 
 
-void initializeMyList(MyList *list);
-void append(MyList *list, Line *ligne);
+List *initList();
+void append(List *list, Line *ligne);
 void hough_transform(SDL_Surface *image);
 Line *initLine(void *x1,void *y1,void *x2, void *y2);
 
