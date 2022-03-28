@@ -6,9 +6,49 @@
 #include "pixel_operations.h"
 #include "SDL/SDL_image.h"
 #include "SDL/SDL.h"
-
+#include "segmentation.h"
 
 #define PI 3.14159265358979
+
+
+void append(MyList *list, Line *ligne)
+{
+    if (list->head == NULL)
+    {
+        list->head = ligne;
+        list->tail = ligne;
+    }
+    else
+    {
+        list->tail->next = ligne;
+        ligne->prev = list->tail;
+        list->tail = ligne;
+    }
+    list->length++;
+}
+
+
+Line *initLine(void *x,void *y,void *xx,void *yy){
+	Line *ligne = (Line *)malloc(sizeof(Line));
+    	if (ligne == NULL)
+        errx(1, "Initialize Node: not enough memory");
+		
+		ligne->x1=x;
+		ligne->y1=y;
+		ligne->x2=xx;
+		ligne->y2=yy;
+		ligne->next=NULL; 
+		ligne->prev=NULL;
+	return ligne;
+}
+
+void initializeMyList(MyList *list)
+{
+        list->head = NULL;
+        list->tail = NULL;
+        list->length = 0;
+}
+
 unsigned int **initMatrice(unsigned int x, unsigned int y)
 {
     unsigned int **matrice = NULL;
@@ -113,7 +153,7 @@ void hough_transform(SDL_Surface *image){
 
 	printf("ok\n");
 	int treshhold=0.4*max;
-	int taille=0;
+	/*int taille=0;
 	for (int theta = 0; theta <= nbTheta; theta++){
         	for (int rho = 0; rho <= nbRho; rho++){
             		int val = accum[rho][theta];
@@ -121,9 +161,9 @@ void hough_transform(SDL_Surface *image){
 				taille++;
 			}
 		}
-	}
+	}*/
 	printf("ok\n");
-	unsigned int **line_tab=initMatrice((unsigned int)taille+1,(unsigned int)4+1);
+	MyList line_tab={NULL,NULL,0};
 	/*for(int i =0;i<taille;i++){
 		for(int j=0;j<4;j++){
 			line_tab[i][j]=0;
@@ -142,9 +182,6 @@ void hough_transform(SDL_Surface *image){
     	int prev = accum[0][0];
     	int prev_theta = 0, prev_rho = 0;
     	int boolIsIncreasing = 1;
-	//int tt = 0;
-	line_tab[0][0]++;
-	line_tab[0][0]--;
 
 	printf("ok\n");
 	for (int theta = 0; theta <= nbTheta; theta++){
@@ -217,6 +254,9 @@ void hough_transform(SDL_Surface *image){
 				printf("%d\n",y2);
 				printf("test7\n");
                     		draw_line(image,x1,y1,x2,y2);
+				int *x=&x1,*y=&y1,*xx=&x2,*yy=&y2;
+				Line *line=initLine(x,y,xx,yy);
+				append(&line_tab,line);
 				/*printf("test8\n");
 				line_tab[tt][0]=x1;
 				printf("test9\n");
