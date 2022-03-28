@@ -1,4 +1,5 @@
 #include "../../include/neural_network/save_and_load.h"
+#include <math.h>
 
 #define MAX_LENGTH 3000
 
@@ -14,7 +15,7 @@ void saveNetwork(Network* network, char name[]){
 
 	// write the format of the network
 	fprintf(file, "%i", network->layers[0]->nb_neurons);
-	for(unsigned int i = 1; i < network->nb_layers;i++){
+	for(unsigned int i = 1; i < network->nb_layers; i++){
 		fprintf(file, "-%i", network->layers[i]->nb_neurons);
 	}
 	fprintf(file, "\n");

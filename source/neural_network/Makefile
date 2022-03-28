@@ -1,5 +1,5 @@
 main: main.o neural_network.o save_and_load.o XOR.o
-	gcc -lm -o main main.o neural_network.o save_and_load.o XOR.o
+	gcc -o main main.o neural_network.o save_and_load.o XOR.o -lm
 
 main.o: main.c
 	gcc -Wall -Wextra -Werror -c main.c

@@ -3,7 +3,7 @@
 
 #include "neural_network.h"
 
-double log_loss(double results[], double expected_results[], size_t length);
 double feedforward(Network* network, double inputs[]);
+void trainning(Network* network, double eta, unsigned int epochs);
 
 #endif

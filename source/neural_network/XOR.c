@@ -1,16 +1,5 @@
 #include "../../include/neural_network/XOR.h"
-
-
-double log_loss(double results[], double expected_results[], size_t length){
-	double sum = 0;
-	double m = 0;
-	for(size_t i = 0; i < length; i++){
-		sum += expected_results[i] * log(results[i]) +
-		       	(1 - expected_results[i]) * log(1 - results[i]);
-		m++;
-	}
-	return (-1 / m) * sum;
-}
+#include <math.h>
 
 double feedforward(Network* network, double inputs[]){
 	// add the inputs in the neural network
@@ -34,17 +23,38 @@ double feedforward(Network* network, double inputs[]){
 	}
 
 	// return the activation of the output neuron
-	printf("the activation of the neuron is: %f\n",
-		       	network->layers[network->nb_layers - 1]->neurons[0]->activation);
+	//printf("the activation of the neuron is: %f\n",
+	//	       	network->layers[network->nb_layers - 1]->neurons[0]->activation);
 	return network->layers[network->nb_layers - 1]->neurons[0]->activation;
 }
 
 
-void gradients(){
+void trainning(Network* network, double eta, unsigned int epochs){
+	double inputsList[4][2] = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
+	double expectedList[] = {0, 1, 1, 0};
+	double cost = 0;
 
-}
+	for(unsigned int i = 0; i < 4; i++){
+		printf("for the inputs %f | %f\nThe result is %f and the expected result is: %f\n",
+		inputsList[i][0], inputsList[i][1], feedforward(network,
+		inputsList[i]), expectedList[i]);
+	}
 
+	for(unsigned int i = 0; i < epochs; i++){
+		for(unsigned int j = 0; j < 4; j++){
+			feedforward(network, inputsList[j]);
+			double expected[1] = {expectedList[j]};
+			cost += cost_function(network, expected);
+			back_propagation(network, expected);
+			update(network, eta);
+		}
+		printf("the cost of the neural network is: %f\n", cost);
+		cost = 0;
+	}
 
-void update(){
-
+	for(unsigned int i = 0; i < 4; i++){
+		printf("for the inputs %f | %f\nThe result is %f and the expected result is: %f\n",
+		inputsList[i][0], inputsList[i][1], feedforward(network,
+		inputsList[i]), expectedList[i]);
+	}
 }

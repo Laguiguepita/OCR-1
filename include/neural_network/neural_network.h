@@ -11,7 +11,7 @@
 
 typedef struct Neuron{
 	unsigned int nb_weights;
-	double bias, activation;
+	double bias, activation, delta;
 	double* weights;
 } Neuron;
 
@@ -47,6 +47,12 @@ double sigmoid(double x);
 double sigmoid_prime(double x);
 
 void softmax(Layer* layer);
+
+double cost_function(Network* network, double expected[]);
+
+void back_propagation(Network* network, double expected[]);
+
+void update(Network* network, double eta);
 
 
 #endif

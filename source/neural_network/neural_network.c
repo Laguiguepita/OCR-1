@@ -1,3 +1,4 @@
+#include <math.h>
 #include "../../include/neural_network/neural_network.h"
 
 Neuron* newNeuron(unsigned int nb_weights){
@@ -12,6 +13,7 @@ Neuron* newNeuron(unsigned int nb_weights){
 	neuron->nb_weights = nb_weights;
 	neuron->bias = 0;
 	neuron->activation = 0;
+	neuron->delta = 0;
 	neuron->weights = NULL;
 
 	// allocating memory for the weights
@@ -175,7 +177,8 @@ double sigmoid(double x){
 }
 
 double sigmoid_prime(double x){
-	return sigmoid(x) * (1 - sigmoid(x));
+	// admeting that x variable is the activation so x = sigmoid(x')
+	return x * (1 - x);
 }
 
 void softmax(Layer* layer){
@@ -205,4 +208,55 @@ void softmax(Layer* layer){
 		layer->neurons[i]->activation = 
 			(exp(layer->neurons[i]->activation)) / divisor;
 	}
+}
+
+
+double cost_function(Network* network, double expected[]){
+	double cost = 0;
+	for(unsigned int i = 0; i < network->layers[network->nb_layers - 1]->nb_neurons; i++){
+		cost += 
+		(network->layers[network->nb_layers - 1]->neurons[i]->activation - expected[i]) *
+		(network->layers[network->nb_layers - 1]->neurons[i]->activation - expected[i]);
+	}
+	return cost;
+}
+
+
+void back_propagation(Network* network, double expected[]){
+	// the output layer
+	for(unsigned int i = 0; i < network->layers[network->nb_layers - 1]->nb_neurons; i++){
+		network->layers[network->nb_layers - 1]->neurons[i]->delta =
+		2 * (network->layers[network->nb_layers - 1]->neurons[i]->activation - expected[i]) *
+		sigmoid_prime(network->layers[network->nb_layers - 1]->neurons[i]->activation);
+	}
+	// all the hiden layers
+	for(unsigned int i = network->nb_layers - 2; i > 0; i--){
+		for(unsigned int j = 0; j < network->layers[i]->nb_neurons; j++){
+			double sum = 0;
+			for(unsigned int l = 0; l < network->layers[i+1]->nb_neurons; l++){
+				sum += network->layers[i+1]->neurons[l]->delta *
+				network->layers[i+1]->neurons[l]->weights[j];
+			}
+			network->layers[i]->neurons[j]->delta = sum * 
+			sigmoid_prime(network->layers[i]->neurons[j]->activation);
+		}
+	}
+}
+
+void update(Network* network, double eta){
+	// all the layers excepted the input layers
+	for(unsigned int i = network->nb_layers - 1; i > 0; i--){
+		for(unsigned int j = 0; j < network->layers[i]->nb_neurons; j++){
+			for(unsigned int l = 0; l < network->layers[i]->neurons[j]->nb_weights; l++){
+				network->layers[i]->neurons[j]->weights[l] -=
+				eta *
+				network->layers[i]->neurons[j]->delta *
+				network->layers[i-1]->neurons[l]->activation;
+			}
+			network->layers[i]->neurons[j]->bias -=
+			eta *
+			network->layers[i]->neurons[j]->delta;
+		}
+	}
+
 }
