@@ -5,6 +5,7 @@
 #include "sdl_functions.h"
 #include "grayscale.h"
 #include "pretreatment_color.h"
+#include "../Hough/segmentation.h"
 
 int main(){
     SDL_Surface* image_surface;                                                 
@@ -40,7 +41,15 @@ int main(){
     binarize(image_surface);
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
+    invert(image_surface);
+    update_surface(screen_surface, image_surface);
+    wait_for_keypressed();
+    hough_transform(image_surface);
+    //draw_line(image_surface,25,1000,23,1000);
+    update_surface(screen_surface, image_surface);
+    wait_for_keypressed();
+
     SDL_FreeSurface(image_surface);                                             
     SDL_FreeSurface(screen_surface);
-
+    
 }

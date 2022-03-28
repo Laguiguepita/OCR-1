@@ -42,7 +42,7 @@ int fillSudoku(double puzzle[], int row, int col)
                                         puzzle[row*9 + col] = i+1;
                                         if((col+1)<9)
                                         {
-                                                if(fillSudoku(puzzle, row, col +1)) 
+                                                if(fillSudoku(puzzle,row,col+1)) 
                                                         return 1;
                                                 else 
                                                         puzzle[row*9 + col] = 0;
@@ -95,7 +95,6 @@ int matrix_to_file(double matrix[], int size)
                 }
         
         fclose(fp);
-        
         return 0;
 }
 
@@ -107,11 +106,11 @@ void file_to_matrix(char path[], double *pointer) {
         FILE * fp;
         fp = fopen(path, "r");
         
-        int size = 9;
-        double matrice[size*size];
+        //int size = 9;
+        //double matrice[size*size];
         
-        for (int j = 0; j < size*size; j++)
-                matrice[j] = 0;
+        //for (int j = 0; j < size*size; j++)
+        //        matrice[j] = 0;
         
         
         int i = 0;
@@ -127,7 +126,6 @@ void file_to_matrix(char path[], double *pointer) {
                 }
         fclose(fp);
         
-        
 }
 
 
@@ -140,8 +138,7 @@ int main(int argc, char *argv[])
         
         int size = 9;
         
-        double * pointer = (double *) calloc(size*size, sizeof(double));
-        
+        double pointer[81];
         for (int j = 0; j < size*size; j++)
                 pointer[j] = 0;
 
@@ -156,7 +153,7 @@ int main(int argc, char *argv[])
         else
                 printf("pas de solution");
         
-        free(pointer);
+        //free(pointer);
         
         return 0;
 }
