@@ -6,11 +6,11 @@
 void saveNetwork(Network* network, char name[]){
 	// try to open the file
 	FILE* file = NULL;
-	char destination[] = "saves/";
+	char destination[60] = "saves/";
 	strcat(destination, name);
-	file = fopen(destination, "w");
+	file = fopen(destination, "w+");
 	if(file == NULL){
-    		errx(1, "something goes wrong");
+    		errx(1, "failed to open the file");
 	}
 
 	// write the format of the network
