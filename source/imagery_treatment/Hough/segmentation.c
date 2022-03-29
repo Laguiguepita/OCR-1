@@ -268,53 +268,92 @@ void Line_sort(List *list,int max, SDL_Surface *image){
 	Line *ligne1=list->head;
 	Line *ligne2=list->head;
 	List *reel_list=initList();
+	printf("%li\n",list->length);
 	List *newlist=initList();
-		int *x = 0;
-		int *y = 0;
-		int *xx= 0;
-		int *yy= 0;
-		int tot=0;
-	while(ligne1->next!=NULL){
+	Line *sum=list->head;
+		int *x = malloc(10*sizeof(int));
+		int *y = malloc(10*sizeof(int));;
+		int *xx= malloc(10*sizeof(int));;
+		int *yy= malloc(10*sizeof(int));;
+		size_t tot=0;
+		int xl=0;
+		int yl=0;
+		int xxl=0;
+		int yyl=0;
+		size_t t=0;
+		size_t tt=0;
+	while(tt<list->length && ligne1->next!=NULL){
+		printf("infini1\n");
+		newlist=initList();
 		append(newlist,ligne1);
-		while(ligne2->next!=NULL){
-			if(fabs((double)(ligne1->x1-ligne2->x1))<max &&
+		printf("infini2\n");
+		tot=0;
+		while(tot<list->length && ligne2!=NULL){
+			if( 
+			(fabs((double)(ligne1->x1-ligne2->x1))<max &&
 				fabs((double)(ligne1->x2-ligne2->x2))<max && 
 				fabs((double)(ligne1->y1-ligne2->y1))<max &&
-				fabs((double)(ligne1->y2-ligne2->y2))<max){
+				fabs((double)(ligne1->y2-ligne2->y2))<max)){
 					append(newlist,ligne2);							
+					ligne2=ligne2->next;
+					tot++;
 			}
-			ligne2=ligne2->next;
 		}
 		if(ligne2!=NULL){
 			ligne1=ligne2->next;
+			tt++;
+		//else{
+		//	break;
+		//}
+		printf("infini2.0\n");
+		sum=newlist->head;
+		xl = 0;
+		yl = 0;
+		xxl= 0;
+		yyl= 0;
+		t=0;
+		while(t<newlist->length && sum->next!=NULL){
+		printf("infini3\n");
+			xl+=*(sum->x1);
+			yl+=*(sum->y1);
+			xxl+=*(sum->x2);
+			yyl+=*(sum->y2);
+			t++;
+			sum=sum->next;
+		}
+		printf("inifi4\n");
+		xl=xl/newlist->length;
+		printf("caca\n");
+		yl=yl/newlist->length;
+		printf("caca\n");
+		xxl=xxl/newlist->length;
+		printf("caca\n");
+		yyl=yyl/newlist->length;
+		printf("caca\n");
+		//xl=*x;
+		//yl=*y;
+		//xxl=*xx;
+		//yyl=*yy;
+		printf("caca\n");
+		draw_line(image,xl,yl,xxl,yyl);
+		printf("caca\n");
+		Line *add=initLine(&xl,&yl,&xxl,&yyl);
+		printf("caca\n");
+		append(reel_list,add);
+		printf("caca\n");
+		newlist=initList();
+		printf("caca\n");
+		printf("%li\n",tt);
 		}
 		else{
 			break;
 		}
-		Line *sum=newlist->head;
-		*x = 0;
-		*y = 0;
-		*xx= 0;
-		*yy= 0;
-		tot=0;
-		while(sum->next!=NULL){
-			x+=*(sum->x1);
-			y+=*(sum->y1);
-			xx+=*(sum->x2);
-			yy+=*(sum->y2);
-			tot++;
-			sum=sum->next;
-		}
-		*x/=tot;
-		*y/=tot;
-		*xx/=tot;
-		*yy/=tot;
-		draw_line(image,*x,*y,*xx,*yy);
-		Line *add=initLine(x,y,xx,yy);
-		append(reel_list,add);
-		newlist=initList();
 
 	}
+	free(x);
+	free(xx);
+	free(y);
+	free(yy);
 }
 
 
