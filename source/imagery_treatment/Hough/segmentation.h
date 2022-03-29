@@ -3,10 +3,10 @@
 
 typedef struct Line_t
 {
-    void *x1;
-    void *y1;
-    void *x2;
-    void *y2;
+    int *x1;
+    int *y1;
+    int *x2;
+    int *y2;
     struct Line_t *next;
     struct Line_t *prev;
 } Line;
@@ -21,7 +21,7 @@ typedef struct
 
 List *initList();
 void append(List *list, Line *ligne);
-void hough_transform(SDL_Surface *image);
-Line *initLine(void *x1,void *y1,void *x2, void *y2);
-
+List *hough_transform(SDL_Surface *image, SDL_Surface *image_cp);
+Line *initLine(int *x1,int *y1,int *x2, int *y2);
+void Line_sort(List *list,int max, SDL_Surface *image);
 #endif

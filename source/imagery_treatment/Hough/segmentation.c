@@ -28,7 +28,7 @@ void append(List *list, Line *ligne)
 }
 
 
-Line *initLine(void *x,void *y,void *xx,void *yy){
+Line *initLine(int *x,int *y,int *xx,int *yy){
 	Line *ligne = (Line *)malloc(sizeof(Line));
 		ligne->x1=x;
 		ligne->y1=y;
@@ -58,7 +58,7 @@ unsigned int **initMatrix(unsigned int x, unsigned int y)
     return matrice;
 }
 
-void hough_transform(SDL_Surface *image){
+List *hough_transform(SDL_Surface *image,SDL_Surface *image_cp){
 	int width=image->w;
 	int height=image->h;
 	//SDL_Surface *copy_image=image;
@@ -243,7 +243,7 @@ void hough_transform(SDL_Surface *image){
 				printf("%d\n",x2);
 				printf("%d\n",y2);
 				printf("test7\n");
-                    		draw_line(image,x1,y1,x2,y2);
+                    		draw_line(image_cp,x1,y1,x2,y2);
 				int *x=&x1,*y=&y1,*xx=&x2,*yy=&y2;
 				Line *line=initLine(x,y,xx,yy);
 				append(line_tab,line);
@@ -260,10 +260,62 @@ void hough_transform(SDL_Surface *image){
 
 
 	}
+	return line_tab;
 }
 
 
+void Line_sort(List *list,int max, SDL_Surface *image){
+	Line *ligne1=list->head;
+	Line *ligne2=list->head;
+	List *reel_list=initList();
+	List *newlist=initList();
+		int *x = 0;
+		int *y = 0;
+		int *xx= 0;
+		int *yy= 0;
+		int tot=0;
+	while(ligne1->next!=NULL){
+		append(newlist,ligne1);
+		while(ligne2->next!=NULL){
+			if(fabs((double)(ligne1->x1-ligne2->x1))<max &&
+				fabs((double)(ligne1->x2-ligne2->x2))<max && 
+				fabs((double)(ligne1->y1-ligne2->y1))<max &&
+				fabs((double)(ligne1->y2-ligne2->y2))<max){
+					append(newlist,ligne2);							
+			}
+			ligne2=ligne2->next;
+		}
+		if(ligne2!=NULL){
+			ligne1=ligne2->next;
+		}
+		else{
+			break;
+		}
+		Line *sum=newlist->head;
+		*x = 0;
+		*y = 0;
+		*xx= 0;
+		*yy= 0;
+		tot=0;
+		while(sum->next!=NULL){
+			x+=*(sum->x1);
+			y+=*(sum->y1);
+			xx+=*(sum->x2);
+			yy+=*(sum->y2);
+			tot++;
+			sum=sum->next;
+		}
+		*x/=tot;
+		*y/=tot;
+		*xx/=tot;
+		*yy/=tot;
+		draw_line(image,*x,*y,*xx,*yy);
+		Line *add=initLine(x,y,xx,yy);
+		append(reel_list,add);
+		newlist=initList();
 
+	}
+}
 
 
 
