@@ -10,12 +10,13 @@
 int main(){
     SDL_Surface* image_surface;                                                 
     SDL_Surface* screen_surface;                                                
-                                                                                
+    SDL_Surface* image_surface2;                                                                             
     init_sdl();                                                                 
                                                                                 
     image_surface = load_image("my_image.png");                                 
     screen_surface = display_image(image_surface);                              
-                                                                                
+    image_surface2 = load_image("my_image.png"); 
+
     wait_for_keypressed();                                                      
     grayscale(image_surface);                                                   
     update_surface(screen_surface, image_surface);                              
@@ -44,11 +45,12 @@ int main(){
     invert(image_surface);
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
-    hough_transform(image_surface);
-    //draw_line(image_surface,25,1000,23,1000);
+    List *lines=initList();
+    lines=hough_transform(image_surface,image_surface2);
+    Line_sort(lines,30, image_surface);
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
-
+    
     SDL_FreeSurface(image_surface);                                             
     SDL_FreeSurface(screen_surface);
     

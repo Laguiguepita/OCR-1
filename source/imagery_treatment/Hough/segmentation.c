@@ -6,29 +6,59 @@
 #include "pixel_operations.h"
 #include "SDL/SDL_image.h"
 #include "SDL/SDL.h"
-
+#include "segmentation.h"
 
 #define PI 3.14159265358979
-unsigned int **initMatrice(unsigned int x, unsigned int y)
+
+
+void append(List *list, Line *ligne)
+{
+    if (list->head == NULL)
+    {
+        list->head = ligne;
+        list->tail = ligne;
+    }
+    else
+    {
+        list->tail->next = ligne;
+        ligne->prev = list->tail;
+        list->tail = ligne;
+    }
+    list->length++;
+}
+
+
+Line *initLine(int *x,int *y,int *xx,int *yy){
+	Line *ligne = (Line *)malloc(sizeof(Line));
+		ligne->x1=x;
+		ligne->y1=y;
+		ligne->x2=xx;
+		ligne->y2=yy;
+		ligne->next=NULL; 
+		ligne->prev=NULL;
+	return ligne;
+}
+
+List *initList()
+{
+	List *liste=(List *)malloc(sizeof(List));
+        liste->head = NULL;
+        liste->tail = NULL;
+        liste->length = 0;
+	return liste;
+}
+
+unsigned int **initMatrix(unsigned int x, unsigned int y)
 {
     unsigned int **matrice = NULL;
     matrice = calloc(y + 1, sizeof(unsigned int *));
-    if (matrice == NULL)
-    {
-        errx(1, "Memory error");
-    }
-    for (size_t j = 0; j < y; j++)
-    {
+    for (size_t j = 0; j < y; j++){
         matrice[j] = calloc(x + 1, sizeof(unsigned int));
-        if (matrice[j] == NULL)
-        {
-            errx(1, "Memory error");
-        }
     }
     return matrice;
 }
 
-void hough_transform(SDL_Surface *image){
+List *hough_transform(SDL_Surface *image,SDL_Surface *image_cp){
 	int width=image->w;
 	int height=image->h;
 	//SDL_Surface *copy_image=image;
@@ -79,7 +109,7 @@ void hough_transform(SDL_Surface *image){
     	}
 	
 	printf("ok,%f,%d\n",nbTheta+1,(int)nbTheta+1);
-	unsigned int **accum=initMatrice(nbTheta+1,nbRho+1); 
+	unsigned int **accum=initMatrix(nbTheta+1,nbRho+1); 
     	//unsigned int accum[(size_t)nbTheta+1][(size_t)(nbRho+1)];
 	//memset(accum,0,(nbTheta+1)*(nbRho+1)*sizeof(unsigned int)); 
 	/*for(int p = 0; p<3000;p++){
@@ -97,7 +127,7 @@ void hough_transform(SDL_Surface *image){
 			Uint32 pixel = get_pixel(image, x, y);              
                      	Uint8 r, g, b;                                              
                      	SDL_GetRGB(pixel, image->format, &r, &g, &b);
-            		if (r == 0){
+            		if (r == 255){
                 		for (int theta = 0; theta <= nbTheta; theta++){
                     			rho = x * cos_tab[theta] + 
 					y * sin_tab[theta];
@@ -113,7 +143,7 @@ void hough_transform(SDL_Surface *image){
 
 	printf("ok\n");
 	int treshhold=0.4*max;
-	int taille=0;
+	/*int taille=0;
 	for (int theta = 0; theta <= nbTheta; theta++){
         	for (int rho = 0; rho <= nbRho; rho++){
             		int val = accum[rho][theta];
@@ -121,9 +151,9 @@ void hough_transform(SDL_Surface *image){
 				taille++;
 			}
 		}
-	}
+	}*/
 	printf("ok\n");
-	unsigned int **line_tab=initMatrice((unsigned int)taille+1,(unsigned int)4+1);
+	List *line_tab=initList();
 	/*for(int i =0;i<taille;i++){
 		for(int j=0;j<4;j++){
 			line_tab[i][j]=0;
@@ -142,66 +172,150 @@ void hough_transform(SDL_Surface *image){
     	int prev = accum[0][0];
     	int prev_theta = 0, prev_rho = 0;
     	int boolIsIncreasing = 1;
-	int tt = 0;
-	line_tab[tt][0]++;
-	line_tab[tt][0]--;
 
 	printf("ok\n");
 	for (int theta = 0; theta <= nbTheta; theta++){
         	for (int rho = 0; rho <= nbRho; rho++){
             		int val = accum[rho][theta];
-
+			printf("test1|=\n");
             		if (val >= prev){
                 		prev = val;
                 		prev_rho = rho;
                 		prev_theta = theta;
                 		boolIsIncreasing = 1;
                			continue;
+				printf("test2\n");
             		}
             		else if (val < prev && boolIsIncreasing){
                 		boolIsIncreasing = 0;
+
+				printf("test3\n");
             		}
             		else if (val < prev){
                 		prev = val;
                 		prev_rho = rho;
                 		prev_theta = theta;
                 		continue;
+				printf("test4\n");
             		}
 
             		if (val >= treshhold){
                 		double r = arrRhos[prev_rho];
 				double t = arrThetas[prev_theta];
-			
+				
+				printf("test5\n");
                 		if (t > tempMaxTheta){
                     			tempMaxTheta = t;
                     			rounded_angle = (unsigned int)180.0*(t)
 									   /PI;
                     			histogram[rounded_angle]++;
+
+				printf("test6\n");
                 		}
 
                 		double c = cos(t), s = sin(t);
                 		int x0 =(c * r);
                 		int y0 =(s * r);
-                		int x1 = x0 + (diagonal * (-s));
-                		int y1 = y0 + (diagonal * c);
-                		int x2 = x0 - (diagonal * (-s));
-                		int y2 = y0 - (diagonal * c);
+                		int x1 = x0 + (int)(diagonal * (-s));
+                		int y1 = y0 + (int)(diagonal * c);
+                		int x2 = x0 - (int)(diagonal * (-s));
+                		int y2 = y0 - (int)(diagonal * c);
+				if(x1>width)
+					x1=width-1;
+				if(x2>width)
+					x2=width-1;
+				if(y1>height)
+					y1=height-1;
+				if(y2>height)
+					y2=height-1;
+				if(x1<0)
+					x1=0;
+				if(x2<0)
+					x2=0;
+				if(y1<0)
+					y1=0;
+				if(y2<0)
+					y2=0;
 
-                    		draw_line(image,x1,y1,x2,y2);
+
+				printf("%d\n",x1);
+				printf("%d\n",y1);
+				printf("%d\n",x2);
+				printf("%d\n",y2);
+				printf("test7\n");
+                    		draw_line(image_cp,x1,y1,x2,y2);
+				int *x=&x1,*y=&y1,*xx=&x2,*yy=&y2;
+				Line *line=initLine(x,y,xx,yy);
+				append(line_tab,line);
+				/*printf("test8\n");
 				line_tab[tt][0]=x1;
+				printf("test9\n");
 				line_tab[tt][1]=y1;
+				printf("test0\n");
 				line_tab[tt][2]=x2;
 				line_tab[tt][3]=y2;
-				tt++;
+				tt++;*/
 			}
 		}
 
 
 	}
+	return line_tab;
 }
 
 
+void Line_sort(List *list,int max, SDL_Surface *image){
+	Line *ligne1=list->head;
+	Line *ligne2=list->head;
+	List *reel_list=initList();
+	List *newlist=initList();
+		int *x = 0;
+		int *y = 0;
+		int *xx= 0;
+		int *yy= 0;
+		int tot=0;
+	while(ligne1->next!=NULL){
+		append(newlist,ligne1);
+		while(ligne2->next!=NULL){
+			if(fabs((double)(ligne1->x1-ligne2->x1))<max &&
+				fabs((double)(ligne1->x2-ligne2->x2))<max && 
+				fabs((double)(ligne1->y1-ligne2->y1))<max &&
+				fabs((double)(ligne1->y2-ligne2->y2))<max){
+					append(newlist,ligne2);							
+			}
+			ligne2=ligne2->next;
+		}
+		if(ligne2!=NULL){
+			ligne1=ligne2->next;
+		}
+		else{
+			break;
+		}
+		Line *sum=newlist->head;
+		*x = 0;
+		*y = 0;
+		*xx= 0;
+		*yy= 0;
+		tot=0;
+		while(sum->next!=NULL){
+			x+=*(sum->x1);
+			y+=*(sum->y1);
+			xx+=*(sum->x2);
+			yy+=*(sum->y2);
+			tot++;
+			sum=sum->next;
+		}
+		*x/=tot;
+		*y/=tot;
+		*xx/=tot;
+		*yy/=tot;
+		draw_line(image,*x,*y,*xx,*yy);
+		Line *add=initLine(x,y,xx,yy);
+		append(reel_list,add);
+		newlist=initList();
 
+	}
+}
 
 
 
