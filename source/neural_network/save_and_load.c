@@ -1,7 +1,7 @@
 #include "../../include/neural_network/save_and_load.h"
 #include <math.h>
 
-#define MAX_LENGTH 3000
+#define MAX_LENGTH 6000
 
 void saveNetwork(Network* network, char name[]){
 	// try to open the file
@@ -47,7 +47,7 @@ Network* loadNetwork(char name[]){
 	strcat(destination, name);
 	file = fopen(destination, "r");
 	if(file == NULL){
-		errx(1, "someting goes wrong");
+		errx(1, "failed to open the file");
 	}
 
 	// count the number of layers in the network
