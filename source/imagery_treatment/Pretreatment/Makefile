@@ -12,7 +12,7 @@ all: display grayscale
 display: display.o
 grayscale: pixel_operations.o grayscale.o
 grayscale.o: pixel_operations.h sdl_functions.h
-main:grayscale.o pretreatment_color.o pixel_operations.o sdl_functions.o ../Hough/segmentation.o 
+main:grayscale.o pretreatment_color.o pixel_operations.o sdl_functions.o ../Hough/segmentation.o ../Hough/hough.o 
 clean:
 	${RM} *.o
 	${RM} *.d
