@@ -247,7 +247,8 @@ void update(Network* network, double eta){
 	// all the layers excepted the input layers
 	for(unsigned int i = network->nb_layers - 1; i > 0; i--){
 		for(unsigned int j = 0; j < network->layers[i]->nb_neurons; j++){
-			for(unsigned int l = 0; l < network->layers[i]->neurons[j]->nb_weights; l++){
+			for(unsigned int l = 0; l
+			< network->layers[i]->neurons[j]->nb_weights; l++){
 				network->layers[i]->neurons[j]->weights[l] -=
 				eta *
 				network->layers[i]->neurons[j]->delta *

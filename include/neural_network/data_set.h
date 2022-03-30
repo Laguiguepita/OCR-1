@@ -3,6 +3,8 @@
 
 #include "neural_network.h"
 
-void read_data();
+void load_label();
+void load_image();
+void print_image(unsigned char image[28][28]);
 
 #endif

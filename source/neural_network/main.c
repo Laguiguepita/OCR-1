@@ -7,10 +7,11 @@
 
 int main(){
 	
-	read_data();
+	load_image();
+	//load_label();
 
 	
-	//unsigned int sizes[] = {2,4,5,1};
+	//unsigned int sizes[] = {2,2,1};
 	//Network* network = initNetwork(sizes, sizeof(sizes)/sizeof(unsigned int));
 	//Network* network = loadNetwork("test1");
 	//saveNetwork(network, "test1");

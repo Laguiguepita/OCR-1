@@ -14,7 +14,7 @@ XOR.o: XOR.c
 	gcc -Wall -Wextra -Werror -c XOR.c
 
 data_set.o: data_set.c
-	gcc -Wall -Wextra -Werror -c data_set.c
+	gcc -Wall -Wextra -c data_set.c
 
 
 clean:
