@@ -270,7 +270,7 @@ void detect(SDL_Surface *image){
 					lengthx=x1-i;
 					int y1=bottom_corner(image,i,j);
 					lengthy=y1-j;
-					if(abs(lengthy-lengthx)<10){
+					if(abs(lengthy-lengthx)<20){
 						if(lengthx>max){
 							max=lengthx;
 							valx=i;
@@ -282,28 +282,67 @@ void detect(SDL_Surface *image){
 					}
 				}
 				
-				if(r1==255){
+				else if(r1==255 && r2!=255){
+					//Uint32 pixell=get_pixel(image,i,j+1);
+					//Uint8 rr,gg,bb;
+					//SDL_GetRGB(pixell, image->format, &rr, &gg, &bb);
+					//while(rr!=255){
+					//	Uint32 pix=get_pixel(image,i,j+1);
+					//	Uint8 re,gb,bg;
+					//	SDL_GetRGB(pix, image->format, &re, &gb, &bg);
+					//	if(re==255){
+					//		rr=255;
+					//	}
+					//	i++;
 					i++;
+					j--;
+				
 				}
+				else if(r2==255 && r1!=255){
+					//Uint32 pixeel=get_pixel(image,i+1,j);
+					//Uint8 rz,gz,bz;
+					//SDL_GetRGB(pixeel, image->format, &rz, &gz, &bz);
+					//while(rz!=255){
+					//	Uint32 px=get_pixel(image,i+1,j);
+					//	Uint8 ra,ga,ba;
+					//	SDL_GetRGB(px, image->format, &ra, &ga, &ba);
+					//	if(ra==255){
+					//		rz=255;
+					//	}
+					//	j++;
+
+					
+				}
+
+
 			}
 			else{
-				i+=1;
+				i++;
 			}
 		}
-	if(lengthx<lengthy){
-		lengthx=lengthy;
+	if(max<maxY){
+		max=maxY;
 	}
 
 	//SDL_Surface* image = loadImage("output/rotate.bmp");
-        SDL_Surface* imagedest = SDL_CreateRGBSurface(SDL_HWSURFACE,lengthx,lengthx,32,0,0,0,0);
-        SDL_Rect leftR = {valx,valy, lengthx, lengthx};
-        SDL_BlitSurface(image,&leftR,imagedest,NULL);
+        SDL_Surface* imagedest = SDL_CreateRGBSurface(0,max,max,32,0,0,0,0);
+	//draw_line(image,valx,valy,valx+30,valy);
+	for(int i=0;i<max;i++){
+		for(int j=0;j<max;j++){
+			Uint32 pixel= get_pixel(image,valx+i,valy+j);
+			put_pixel(imagedest,i,j,pixel);
+		}
+	}
+	printf("%d,%d,%d\n",valx,valy,lengthx);
+        //SDL_Rect leftR = {valx,valy, lengthx, lengthx};
+        //SDL_BlitSurface(image,&leftR,imagedest,NULL);
         SDL_SaveBMP(imagedest,"final_square.bmp");
 	//SDL_Surface *image2=SDL_LoadBMP("final_square.bmp");
         //IMG_SavePNG(image2,"final_square.png");
-	SDL_FreeSurface(imagedest);
+	//SDL_FreeSurface(imagedest);
 	//SDL_FreeSurface(image2);
         //SDL_FreeSurface(image);
+	break;
 	}
 	//SDL_Surface* image = loadImage("output/rotate.bmp");
         //SDL_Surface* imagedest = SDL_CreateRGBSurface(0,lengthx,lengthx,32,0,0,0,0);
