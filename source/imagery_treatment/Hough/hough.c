@@ -244,7 +244,7 @@ int bottom_corner(SDL_Surface *image,int i,int j){
 
 void detect(SDL_Surface *image){
 
-	int width=image->w;
+//	int width=image->w;
 	int heigth=image->h;
 	int max = 0;
 	int maxY=0;
@@ -252,7 +252,8 @@ void detect(SDL_Surface *image){
 	int valy=0;
 	int lengthx=0;
 	int lengthy=0;
-	for(int i =1;i<width-1;i++){
+	int i=1;
+	//for(int i =1;i<width-1;i++){
 		for(int j=1;j<heigth-1;j++){
 			Uint32 pixel=get_pixel(image,i,j);
 			Uint8 r,g,b;
@@ -283,19 +284,37 @@ void detect(SDL_Surface *image){
 				}
 				
 				else if(r1==255 && r2!=255){
-					//Uint32 pixell=get_pixel(image,i,j+1);
-					//Uint8 rr,gg,bb;
-					//SDL_GetRGB(pixell, image->format, &rr, &gg, &bb);
-					//while(rr!=255){
-					//	Uint32 pix=get_pixel(image,i,j+1);
-					//	Uint8 re,gb,bg;
-					//	SDL_GetRGB(pix, image->format, &re, &gb, &bg);
-					//	if(re==255){
-					//		rr=255;
-					//	}
-					//	i++;
-					i++;
-					j--;
+					Uint32 pixell=get_pixel(image,i,j+1);
+					Uint8 rr,gg,bb;
+					SDL_GetRGB(pixell, image->format, &rr, &gg, &bb);
+					int sav=i;
+					while(rr!=255){
+						Uint32 pix=get_pixel(image,i,j+1);
+						Uint8 re,gb,bg;
+						SDL_GetRGB(pix, image->format, &re, &gb, &bg);
+						if(re==255){
+							rr=255;
+						}
+						i++;
+					}
+					int x1=right_corner(image,i,j);
+					lengthx=x1-i;
+					int y1=bottom_corner(image,i,j);
+					lengthy=y1-j;
+					if(abs(lengthy-lengthx)<20){
+						if(lengthx>max){
+							max=lengthx;
+							valx=i;
+						}
+						if(lengthy>maxY){
+							maxY=lengthy;
+							valy=j;
+						}
+					}
+					else{
+						i=sav;
+						i++;
+					}
 				
 				}
 				else if(r2==255 && r1!=255){
@@ -342,8 +361,8 @@ void detect(SDL_Surface *image){
 	//SDL_FreeSurface(imagedest);
 	//SDL_FreeSurface(image2);
         //SDL_FreeSurface(image);
-	break;
-	}
+	
+}	
 	//SDL_Surface* image = loadImage("output/rotate.bmp");
         //SDL_Surface* imagedest = SDL_CreateRGBSurface(0,lengthx,lengthx,32,0,0,0,0);
         //SDL_Rect leftR = {valx,valy, lengthx, lengthx};
@@ -357,4 +376,4 @@ void detect(SDL_Surface *image){
 //	return image2;
 
 //	SDL_FreeSurface(image2);
-}
+
