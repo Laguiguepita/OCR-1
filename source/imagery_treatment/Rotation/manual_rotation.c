@@ -9,7 +9,7 @@ SDL_Surface *manual_rotation(SDL_Surface *image, double angle){
 	return rotozoomSurface(image,angle,1.0,1.0);
 }
 
-int main(){
+/*int main(){
 	SDL_Surface *image;
 	char path[255];
 	double angle;
@@ -29,4 +29,4 @@ int main(){
 	SDL_Quit();
 	return 0;
 }
-
+*/

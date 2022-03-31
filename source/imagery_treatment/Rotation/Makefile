@@ -10,6 +10,7 @@ LDLIBS= `pkg-config --libs sdl SDL_image SDL_gfx`
 
 
 rotation:manual_rotation.o 
+main:manual_rotation.o
 clean:
 	${RM} *.o
 	${RM} *.d
