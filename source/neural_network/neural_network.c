@@ -1,6 +1,8 @@
 #include <math.h>
 #include "../../include/neural_network/neural_network.h"
 
+
+// -----------------------NEURAL NETWORK STRUCT------------------------
 Neuron* newNeuron(unsigned int nb_weights){
 	// allocating memory for the neuron
 	Neuron* neuron = NULL;
@@ -127,7 +129,46 @@ void freeNetwork(Network* network){
 	free(network);
 }
 
+// -------------------------ACTIVATION FUNCTIONS---------------------------
+double sigmoid(double x){
+	return 1 / (1 + (exp(-1 * x)));
+}
 
+double sigmoid_prime(double x){
+	// admeting that x variable is the activation so x = sigmoid(x')
+	return x * (1 - x);
+}
+
+void softmax(Layer* layer){
+	unsigned int nb_neurons = layer->nb_neurons;
+
+	// try to find the max value of neurons
+	double max = layer->neurons[0]->activation;
+	for(unsigned int i = 1; i < nb_neurons; i++){
+		if(max < layer->neurons[i]->activation){
+			max = layer->neurons[i]->activation;
+		}
+	}
+
+	// substract all neurons value by the max value found
+	for(unsigned int i = 0; i < nb_neurons; i++){
+	layer->neurons[i]->activation = layer->neurons[i]->activation - max;
+	}
+
+	// calculate the divisor of the softmax function
+	double divisor = 0;
+	for(unsigned int i = 0; i < nb_neurons; i++){
+		divisor += (exp(layer->neurons[i]->activation));
+	}
+
+	// calculate the value for each neurons
+	for(unsigned int i = 0; i < nb_neurons; i++){
+		layer->neurons[i]->activation = 
+			(exp(layer->neurons[i]->activation)) / divisor;
+	}
+}
+
+// ----------------------------NEURAL NETWORK FUNCTIONS-----------------------
 void front_propagation(Network* network, double inputs[]){
 	// add the inputs in the neural network
 	unsigned int nb_layers = network->nb_layers;
@@ -172,45 +213,8 @@ void front_propagation(Network* network, double inputs[]){
 	}
 }
 
-double sigmoid(double x){
-	return 1 / (1 + (exp(-1 * x)));
-}
 
-double sigmoid_prime(double x){
-	// admeting that x variable is the activation so x = sigmoid(x')
-	return x * (1 - x);
-}
-
-void softmax(Layer* layer){
-	unsigned int nb_neurons = layer->nb_neurons;
-
-	// try to find the max value of neurons
-	double max = layer->neurons[0]->activation;
-	for(unsigned int i = 1; i < nb_neurons; i++){
-		if(max < layer->neurons[i]->activation){
-			max = layer->neurons[i]->activation;
-		}
-	}
-
-	// substract all neurons value by the max value found
-	for(unsigned int i = 0; i < nb_neurons; i++){
-	layer->neurons[i]->activation = layer->neurons[i]->activation - max;
-	}
-
-	// calculate the divisor of the softmax function
-	double divisor = 0;
-	for(unsigned int i = 0; i < nb_neurons; i++){
-		divisor += (exp(layer->neurons[i]->activation));
-	}
-
-	// calculate the value for each neurons
-	for(unsigned int i = 0; i < nb_neurons; i++){
-		layer->neurons[i]->activation = 
-			(exp(layer->neurons[i]->activation)) / divisor;
-	}
-}
-
-
+// ------------------------NEURAL NETWORK LEARNING FUNCTIONS-------------------
 double cost_function(Network* network, double expected[]){
 	double cost = 0;
 	for(unsigned int i = 0; i < network->layers[network->nb_layers - 1]->nb_neurons; i++){
@@ -259,5 +263,4 @@ void update(Network* network, double eta){
 			network->layers[i]->neurons[j]->delta;
 		}
 	}
-
 }

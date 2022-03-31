@@ -7,19 +7,19 @@
 
 int main(){
 	
-	load_image();
+	//load_image();
 	//load_label();
 
 	
-	//unsigned int sizes[] = {2,2,1};
-	//Network* network = initNetwork(sizes, sizeof(sizes)/sizeof(unsigned int));
+	unsigned int sizes[] = {2,2,1};
+	Network* network = initNetwork(sizes, sizeof(sizes)/sizeof(unsigned int));
 	//Network* network = loadNetwork("test1");
 	//saveNetwork(network, "test1");
 	
 
-	//trainning(network, 0.2, 4000);
+	XOR_trainning(network, 0.4, 4000);
 	//feedforward(network, inputs);
 	//saveNetwork(network, "test1");
-	//freeNetwork(network);
+	freeNetwork(network);
 	return 0;
 }
