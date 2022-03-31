@@ -51,9 +51,13 @@ int main(){
     //Line_sort(lines,30, image_surface);
     houghTransformation(image_surface);
     update_surface(screen_surface, image_surface);
+    //SDL_Surface* image;
     detect(image_surface);
     wait_for_keypressed();
+
+    //update_surface(screen_surface, image);
     
+    //wait_for_keypressed();
     SDL_FreeSurface(image_surface);                                             
     SDL_FreeSurface(screen_surface);
     

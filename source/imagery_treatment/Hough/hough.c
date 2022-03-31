@@ -103,7 +103,7 @@ void houghTransformation(SDL_Surface* image)
                         for (int x = 0; x < width; x++)
                         {
                             int y = (int) (indexk - x * cos(PI*(j)/180.0) / sin(PI*(j)/180.0));
-                            Uint32 pix = SDL_MapRGB(image->format, 178, 33, 33);
+                            Uint32 pix = SDL_MapRGB(image->format, 255, 33, 33);
                             if (y < height && y >= 0)
                             {
 				Uint32 pixel = get_pixel(image, floor(x), floor(y));
@@ -126,7 +126,7 @@ void houghTransformation(SDL_Surface* image)
                         for (int y = 0; y < height; y++)
                         {
                             int x = (int) (indexk - y * sin(PI*(j)/180.0) / cos(PI*(j)/180.0));
-                            Uint32 pix = SDL_MapRGB(image->format, 178, j, j);
+                            Uint32 pix = SDL_MapRGB(image->format, 255, j, j);
                             if (x < width && x >= 0)
                             {
 				Uint32 pixel = get_pixel(image, floor(x), floor(y));
@@ -157,7 +157,7 @@ void houghTransformation(SDL_Surface* image)
 int right_corner(SDL_Surface *image,int i,int j){
 	int x=i;
 	int interx=i;
-	while(x<image->w){
+	while(x<image->w-1){
 		Uint32 pixel_r=get_pixel(image,x,j+1);
 		Uint8 r1,g1,b1;
             	SDL_GetRGB(pixel_r, image->format, &r1, &g1, &b1);
@@ -200,7 +200,7 @@ int right_corner(SDL_Surface *image,int i,int j){
 int bottom_corner(SDL_Surface *image,int i,int j){
 	int y=j;
 	int intery=j;
-	while(y<image->h){
+	while(y<image->h-1){
 		Uint32 pixel_r=get_pixel(image,i+1,j);
 		Uint8 r1,g1,b1;
             	SDL_GetRGB(pixel_r, image->format, &r1, &g1, &b1);
@@ -252,8 +252,8 @@ void detect(SDL_Surface *image){
 	int valy=0;
 	int lengthx=0;
 	int lengthy=0;
-	for(int i =0;i<width;i++){
-		for(int j=0;j<heigth;j++){
+	for(int i =1;i<width-1;i++){
+		for(int j=1;j<heigth-1;j++){
 			Uint32 pixel=get_pixel(image,i,j);
 			Uint8 r,g,b;
             		SDL_GetRGB(pixel, image->format, &r, &g, &b);
@@ -270,10 +270,7 @@ void detect(SDL_Surface *image){
 					lengthx=x1-i;
 					int y1=bottom_corner(image,i,j);
 					lengthy=y1-j;
-					if(abs(lengthy-lengthx)>10){
-						continue;
-					}
-					else{
+					if(abs(lengthy-lengthx)<10){
 						if(lengthx>max){
 							max=lengthx;
 							valx=i;
@@ -284,6 +281,7 @@ void detect(SDL_Surface *image){
 						}
 					}
 				}
+				
 				if(r1==255){
 					i++;
 				}
@@ -297,11 +295,27 @@ void detect(SDL_Surface *image){
 	}
 
 	//SDL_Surface* image = loadImage("output/rotate.bmp");
-        SDL_Surface* imagedest = SDL_CreateRGBSurface(0,lengthx,lengthx,32,0,0,0,0);
+        SDL_Surface* imagedest = SDL_CreateRGBSurface(SDL_HWSURFACE,lengthx,lengthx,32,0,0,0,0);
         SDL_Rect leftR = {valx,valy, lengthx, lengthx};
         SDL_BlitSurface(image,&leftR,imagedest,NULL);
         SDL_SaveBMP(imagedest,"final_square.bmp");
-        SDL_FreeSurface(imagedest);
+	//SDL_Surface *image2=SDL_LoadBMP("final_square.bmp");
+        //IMG_SavePNG(image2,"final_square.png");
+	SDL_FreeSurface(imagedest);
+	//SDL_FreeSurface(image2);
         //SDL_FreeSurface(image);
-}
+	}
+	//SDL_Surface* image = loadImage("output/rotate.bmp");
+        //SDL_Surface* imagedest = SDL_CreateRGBSurface(0,lengthx,lengthx,32,0,0,0,0);
+        //SDL_Rect leftR = {valx,valy, lengthx, lengthx};
+        //SDL_BlitSurface(image,&leftR,imagedest,NULL);
+        //SDL_SaveBMP(imagedest,"final_square.bmp");
+	//SDL_Surface *image2=SDL_LoadBMP("final_square.bmp");
+        //IMG_SavePNG(image2,"final_square.png");
+	//SDL_FreeSurface(imagedest);
+        //SDL_FreeSurface(image);
+
+//	return image2;
+
+//	SDL_FreeSurface(image2);
 }
