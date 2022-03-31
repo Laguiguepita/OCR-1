@@ -154,3 +154,154 @@ void houghTransformation(SDL_Surface* image)
     //SDL_FreeSurface(image);
     //SDL_FreeSurface(houghSpace);
 }
+int right_corner(SDL_Surface *image,int i,int j){
+	int x=i;
+	int interx=i;
+	while(x<image->w){
+		Uint32 pixel_r=get_pixel(image,x,j+1);
+		Uint8 r1,g1,b1;
+            	SDL_GetRGB(pixel_r, image->format, &r1, &g1, &b1);
+		if(r1==255){
+			Uint32 pixel_hr=get_pixel(image,x+1,j-1);
+			Uint32 pixel_br=get_pixel(image,x+1,j+1);
+			Uint32 pixel_bg=get_pixel(image,x-1,j+1);
+			Uint32 pixel_hg=get_pixel(image,x-1,j-1);
+			int nb_dark=0;
+			Uint8 r2,g2,b2;
+			Uint8 r3,g3,b3;
+			Uint8 r4,g4,b4;
+			Uint8 r5,g5,b5;
+            		SDL_GetRGB(pixel_hr, image->format, &r2, &g2, &b2);
+            		SDL_GetRGB(pixel_br, image->format, &r3, &g3, &b3);
+            		SDL_GetRGB(pixel_bg, image->format, &r4, &g4, &b4);
+            		SDL_GetRGB(pixel_hg, image->format, &r5, &g5, &b5);
+			if(r2==0){
+				nb_dark++;
+			}
+			if(r3==0){
+				nb_dark++;
+			}
+			if(r4==0){
+				nb_dark++;
+			}
+			if(r5==0){
+				nb_dark++;
+			}
+			if(nb_dark>=2){
+				break;
+			}
+			interx=x;
+		}
+		x++;
+
+	}
+	return interx;
+}
+int bottom_corner(SDL_Surface *image,int i,int j){
+	int y=j;
+	int intery=j;
+	while(y<image->h){
+		Uint32 pixel_r=get_pixel(image,i+1,j);
+		Uint8 r1,g1,b1;
+            	SDL_GetRGB(pixel_r, image->format, &r1, &g1, &b1);
+		if(r1==255){
+			Uint32 pixel_hr=get_pixel(image,i+1,y-1);
+			Uint32 pixel_br=get_pixel(image,i+1,y+1);
+			Uint32 pixel_bg=get_pixel(image,i-1,y+1);
+			Uint32 pixel_hg=get_pixel(image,i-1,y-1);
+			int nb_dark=0;
+			Uint8 r2,g2,b2;
+			Uint8 r3,g3,b3;
+			Uint8 r4,g4,b4;
+			Uint8 r5,g5,b5;
+            		SDL_GetRGB(pixel_hr, image->format, &r2, &g2, &b2);
+            		SDL_GetRGB(pixel_br, image->format, &r3, &g3, &b3);
+            		SDL_GetRGB(pixel_bg, image->format, &r4, &g4, &b4);
+            		SDL_GetRGB(pixel_hg, image->format, &r5, &g5, &b5);
+			if(r2==0){
+				nb_dark++;
+			}
+			if(r3==0){
+				nb_dark++;
+			}
+			if(r4==0){
+				nb_dark++;
+			}
+			if(r5==0){
+				nb_dark++;
+			}
+			if(nb_dark>=2){
+				break;
+			}
+			intery=y;
+		
+		}
+		y++;
+
+	}
+	return intery;
+}
+
+void detect(SDL_Surface *image){
+
+	int width=image->w;
+	int heigth=image->h;
+	int max = 0;
+	int maxY=0;
+	int valx=0;
+	int valy=0;
+	int lengthx=0;
+	int lengthy=0;
+	for(int i =0;i<width;i++){
+		for(int j=0;j<heigth;j++){
+			Uint32 pixel=get_pixel(image,i,j);
+			Uint8 r,g,b;
+            		SDL_GetRGB(pixel, image->format, &r, &g, &b);
+			if(r==255){
+				Uint32 pixel_r=get_pixel(image,i+1,j);
+				Uint32 pixel_b=get_pixel(image,i,j+1);
+				Uint8 r1,g1,b1;
+				Uint8 r2,g2,b2;
+            			SDL_GetRGB(pixel_r, image->format, &r1, &g1, &b1);
+            			SDL_GetRGB(pixel_b, image->format, &r2, &g2, &b2);
+
+				if(r1==255 && r2==255){
+					int x1=right_corner(image,i,j);
+					lengthx=x1-i;
+					int y1=bottom_corner(image,i,j);
+					lengthy=y1-j;
+					if(abs(lengthy-lengthx)>10){
+						continue;
+					}
+					else{
+						if(lengthx>max){
+							max=lengthx;
+							valx=i;
+						}
+						if(lengthy>maxY){
+							maxY=lengthy;
+							valy=j;
+						}
+					}
+				}
+				if(r1==255){
+					i++;
+				}
+			}
+			else{
+				i+=1;
+			}
+		}
+	if(lengthx<lengthy){
+		lengthx=lengthy;
+	}
+
+	//SDL_Surface* image = loadImage("output/rotate.bmp");
+        SDL_Surface* imagedest = SDL_CreateRGBSurface(0,lengthx,lengthx,32,0,0,0,0);
+        SDL_Rect leftR = {valx,valy, lengthx, lengthx};
+        SDL_BlitSurface(image,&leftR,imagedest,NULL);
+        SDL_SaveBMP(imagedest,"final_square.bmp");
+        SDL_FreeSurface(imagedest);
+        //SDL_FreeSurface(image);
+}
+}
