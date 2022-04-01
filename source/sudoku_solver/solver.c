@@ -190,8 +190,7 @@ int main(int argc, char** argv)
 		
 		if(fillSudoku(sudoku, 0, 0))
 		{
-			//matrix_to_file(sudoku,path);
-			printSudoku(sudoku);
+			matrix_to_file(sudoku,path);
 		}
 		else{
 			printf("Invalid Sudoku\n");
