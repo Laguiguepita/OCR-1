@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "../../include/sudoku_solver/solver.h"
 
 int isAvailable(int sudoku[], int row, int col, int num)
 {
@@ -85,7 +86,7 @@ void printSudoku(int sudoku[])
 }
 
 
-void matrix_to_file(int matrix[],char *path) 
+void matrix_to_file(int matrix[], char *path) 
 {
 	FILE * fp;
 	char end[] = ".result";
@@ -136,13 +137,18 @@ void matrix_to_file(int matrix[],char *path)
 	}
 
 
-
-void file_to_matrix(FILE* fp, int *matrice) {
+void file_to_matrix(char *path, int *matrice)
+{
 	int n=0;
 	int i = 0;
 	char c;
 	char s[3];
 	int j;
+	
+	FILE* fp = fopen(path,"r");
+	
+	
+	
 	for(int k = 0;k<27;k++)
 	{
 		fscanf(fp,"%s",s);
@@ -166,6 +172,7 @@ void file_to_matrix(FILE* fp, int *matrice) {
 			j++;
 		}
 	}
+	fclose(fp);
 }
 
 
@@ -177,12 +184,15 @@ int main(int argc, char** argv)
 	}
 	else
 	{
-		FILE* fp = fopen(argv[1],"r");
+		char *path = argv[1];
 		int* sudoku= calloc(81, sizeof(int));
-		file_to_matrix(fp, sudoku);
-		fclose(fp);
+		file_to_matrix(path, sudoku);
+		
 		if(fillSudoku(sudoku, 0, 0))
-			matrix_to_file(sudoku,argv[1]);
+		{
+			//matrix_to_file(sudoku,path);
+			printSudoku(sudoku);
+		}
 		else{
 			printf("Invalid Sudoku\n");
 		}
