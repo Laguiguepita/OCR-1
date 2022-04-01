@@ -154,136 +154,176 @@ void houghTransformation(SDL_Surface* image)
     //SDL_FreeSurface(image);
     //SDL_FreeSurface(houghSpace);
 }
-int right_corner(SDL_Surface *image,int i,int j){
-	int x=i;
-	int interx=i;
-	while(x<image->w-1){
-		Uint32 pixel_r=get_pixel(image,x,j+1);
-		Uint8 r1,g1,b1;
-            	SDL_GetRGB(pixel_r, image->format, &r1, &g1, &b1);
-		if(r1==255){
-			Uint32 pixel_hr=get_pixel(image,x+1,j-1);
-			Uint32 pixel_br=get_pixel(image,x+1,j+1);
-			Uint32 pixel_bg=get_pixel(image,x-1,j+1);
-			Uint32 pixel_hg=get_pixel(image,x-1,j-1);
-			int nb_dark=0;
-			Uint8 r2,g2,b2;
-			Uint8 r3,g3,b3;
-			Uint8 r4,g4,b4;
-			Uint8 r5,g5,b5;
-            		SDL_GetRGB(pixel_hr, image->format, &r2, &g2, &b2);
-            		SDL_GetRGB(pixel_br, image->format, &r3, &g3, &b3);
-            		SDL_GetRGB(pixel_bg, image->format, &r4, &g4, &b4);
-            		SDL_GetRGB(pixel_hg, image->format, &r5, &g5, &b5);
-			if(r2==0){
-				nb_dark++;
-			}
-			if(r3==0){
-				nb_dark++;
-			}
-			if(r4==0){
-				nb_dark++;
-			}
-			if(r5==0){
-				nb_dark++;
-			}
-			if(nb_dark>=2){
-				break;
-			}
-			interx=x;
-		}
-		x++;
-
-	}
-	return interx;
-}
-int bottom_corner(SDL_Surface *image,int i,int j){
-	int y=j;
-	int intery=j;
-	while(y<image->h-1){
-		Uint32 pixel_r=get_pixel(image,i+1,j);
-		Uint8 r1,g1,b1;
-            	SDL_GetRGB(pixel_r, image->format, &r1, &g1, &b1);
-		if(r1==255){
-			Uint32 pixel_hr=get_pixel(image,i+1,y-1);
-			Uint32 pixel_br=get_pixel(image,i+1,y+1);
-			Uint32 pixel_bg=get_pixel(image,i-1,y+1);
-			Uint32 pixel_hg=get_pixel(image,i-1,y-1);
-			int nb_dark=0;
-			Uint8 r2,g2,b2;
-			Uint8 r3,g3,b3;
-			Uint8 r4,g4,b4;
-			Uint8 r5,g5,b5;
-            		SDL_GetRGB(pixel_hr, image->format, &r2, &g2, &b2);
-            		SDL_GetRGB(pixel_br, image->format, &r3, &g3, &b3);
-            		SDL_GetRGB(pixel_bg, image->format, &r4, &g4, &b4);
-            		SDL_GetRGB(pixel_hg, image->format, &r5, &g5, &b5);
-			if(r2==0){
-				nb_dark++;
-			}
-			if(r3==0){
-				nb_dark++;
-			}
-			if(r4==0){
-				nb_dark++;
-			}
-			if(r5==0){
-				nb_dark++;
-			}
-			if(nb_dark>=2){
-				break;
-			}
-			intery=y;
+int* right_corner(SDL_Surface *image,int i,int j,int height,int* length){
 		
+	int* result = malloc(sizeof(int) *100000);
+	for(int e = height - 1; e > j; e--)
+	{
+	    Uint32 pixel = get_pixel(image, i, e);
+            Uint8 r,g,b;
+            SDL_GetRGB(pixel, image->format, &r, &g, &b);
+            
+		if(r == 255)
+		{
+			*(result + *length) = e - j;
+			*length += 1;
 		}
-		y++;
 
 	}
-	return intery;
+	return result;
+}
+int* bottom_corner(SDL_Surface *image,int i,int j,int* length,int width){
+{	
+	int* result = malloc(sizeof(int) * 100000);
+	for(int e = width - 1; e > i; e--)
+	{
+		Uint32 pixel = get_pixel(image, e, j);
+		Uint8 r,g,b;
+            	SDL_GetRGB(pixel, image->format, &r, &g, &b);
+            
+		if(r == 255)
+		{
+			*(result + *length) = e - i;
+			*length += 1;
+		}
+
+	}
+	return result;
+}
+
+}
+int maxLength(int* verticalLengths, int* horizontalLengths, int vL,int hL)
+{
+	int e = 0;
+	int e2 = 0;
+	int maxlength = 0;
+	while(e < vL)
+	{
+		while(e2 < hL)
+		{
+			if((*(verticalLengths+e))+20 >= *(horizontalLengths+e2) && (*(verticalLengths+e))-20 <= *(horizontalLengths+e2))
+			{
+				int vLength = *(verticalLengths+e);
+				if(maxlength < vLength)
+				{
+					maxlength=(vLength);
+				}
+			}
+			e2+=1;
+		}
+		e2 =0;
+		e +=1;
+	}
+	return maxlength;
 }
 
 void detect(SDL_Surface *image){
 
-//	int width=image->w;
 	int heigth=image->h;
-	int max = 0;
-	int maxY=0;
+	int width =image->w;
 	int valx=0;
 	int valy=0;
-	int lengthx=0;
-	int lengthy=0;
-	int i=1;
-	//for(int i =1;i<width-1;i++){
-		for(int j=1;j<heigth-1;j++){
+	int length = 0;
+	//int length3 =0;
+	//int valx2 =0;
+	//int valy2 =0;
+	for(int i =350;i<width/2;i++){
+		for(int j =170 ; j<heigth/2;j++){
 			Uint32 pixel=get_pixel(image,i,j);
 			Uint8 r,g,b;
             		SDL_GetRGB(pixel, image->format, &r, &g, &b);
-			if(r==255){
-				Uint32 pixel_r=get_pixel(image,i+1,j);
-				Uint32 pixel_b=get_pixel(image,i,j+1);
-				Uint8 r1,g1,b1;
-				Uint8 r2,g2,b2;
-            			SDL_GetRGB(pixel_r, image->format, &r1, &g1, &b1);
-            			SDL_GetRGB(pixel_b, image->format, &r2, &g2, &b2);
-
-				if(r1==255 && r2==255){
-					int x1=right_corner(image,i,j);
-					lengthx=x1-i;
-					int y1=bottom_corner(image,i,j);
-					lengthy=y1-j;
-					if(abs(lengthy-lengthx)<20){
-						if(lengthx>max){
-							max=lengthx;
-							valx=i;
-						}
-						if(lengthy>maxY){
-							maxY=lengthy;
-							valy=j;
-						}
+			if(r==255)
+			{
+				int verti=0;
+				int hori=0;
+				int* vertical = bottom_corner(image,i,j,&verti,width);
+				int* horizontal = right_corner(image,i,j,heigth,&hori);
+				int max = maxLength((vertical),(horizontal),verti,hori);
+				if(max!=0){
+					int cordx=i;
+					int cordy=j;
+					int length2=max;
+					if(length2>length)
+					{
+						valx=cordx;
+						valy=cordy;
+						length=length2;
 					}
-				}
-				
-				else if(r1==255 && r2!=255){
+			}
+				free(vertical);
+				free(horizontal);
+
+			}
+
+		}
+	
+	}
+	/*
+	for(int i =width-1;i<width/2;i--){
+		for(int j =heigth-1 ; j<heigth/2;j--){
+			Uint32 pixel=get_pixel(image,i,j);
+			Uint8 r,g,b;
+            		SDL_GetRGB(pixel, image->format, &r, &g, &b);
+			if(r==255)
+			{
+				int verti2=0;
+				int hori2=0;
+				int* vertical2 = bottom_corner(image,i,valy,&verti2,j);
+				int* horizontal2 = right_corner(image,valx,j,i,&hori2);
+				int max2 = maxLength((vertical2),(horizontal2),verti2,hori2);
+				if(max2!=0){
+					int cordx2=i;
+					int cordy2=j;
+					int length4=max2;
+					if(length4>length3)
+					{
+						valx2=cordx2;
+						valy2=cordy2;
+						length3=length4;
+					}
+			}
+				free(vertical2);
+				free(horizontal2);
+
+			}
+
+		}
+	
+	}
+	if (length3<length){
+	length = valx2;
+	}*/
+
+
+	
+        SDL_Surface* imagedest = SDL_CreateRGBSurface(0,length,length,32,0,0,0,0);
+	for(int x1=0;x1<length;x1++){
+		for(int x2=0;x2<length;x2++){
+			Uint32 pixel= get_pixel(image,valx+x1,valy+x2);
+			put_pixel(imagedest,x1,x2,pixel);
+		}
+	}
+	printf("%d,%d,%d\n",valx,valy,length);
+        SDL_SaveBMP(imagedest,"final_square.bmp");
+	
+	
+			
+}	
+
+	//SDL_Surface* image = loadImage("output/rotate.bmp");
+        //SDL_Surface* imagedest = SDL_CreateRGBSurface(0,lengthx,lengthx,32,0,0,0,0);
+        //SDL_Rect leftR = {valx,valy, lengthx, lengthx};
+        //SDL_BlitSurface(image,&leftR,imagedest,NULL);
+        //SDL_SaveBMP(imagedest,"final_square.bmp");
+	//SDL_Surface *image2=SDL_LoadBMP("final_square.bmp");
+        //IMG_SavePNG(image2,"final_square.png");
+	//SDL_FreeSurface(imagedest);
+        //SDL_FreeSurface(image);
+
+//	return image2;
+
+//	SDL_FreeSurface(image2);
+				/*else if(r1==255 && r2!=255){
 					Uint32 pixell=get_pixel(image,i,j+1);
 					Uint8 rr,gg,bb;
 					SDL_GetRGB(pixell, image->format, &rr, &gg, &bb);
@@ -331,49 +371,10 @@ void detect(SDL_Surface *image){
 					//	j++;
 
 					
-				}
+				}*/
 
 
-			}
-			else{
-				i++;
-			}
-		}
-	if(max<maxY){
-		max=maxY;
-	}
-
-	//SDL_Surface* image = loadImage("output/rotate.bmp");
-        SDL_Surface* imagedest = SDL_CreateRGBSurface(0,max,max,32,0,0,0,0);
-	//draw_line(image,valx,valy,valx+30,valy);
-	for(int i=0;i<max;i++){
-		for(int j=0;j<max;j++){
-			Uint32 pixel= get_pixel(image,valx+i,valy+j);
-			put_pixel(imagedest,i,j,pixel);
-		}
-	}
-	printf("%d,%d,%d\n",valx,valy,lengthx);
-        //SDL_Rect leftR = {valx,valy, lengthx, lengthx};
-        //SDL_BlitSurface(image,&leftR,imagedest,NULL);
-        SDL_SaveBMP(imagedest,"final_square.bmp");
-	//SDL_Surface *image2=SDL_LoadBMP("final_square.bmp");
-        //IMG_SavePNG(image2,"final_square.png");
-	//SDL_FreeSurface(imagedest);
-	//SDL_FreeSurface(image2);
-        //SDL_FreeSurface(image);
+			
+			
+			//else{
 	
-}	
-	//SDL_Surface* image = loadImage("output/rotate.bmp");
-        //SDL_Surface* imagedest = SDL_CreateRGBSurface(0,lengthx,lengthx,32,0,0,0,0);
-        //SDL_Rect leftR = {valx,valy, lengthx, lengthx};
-        //SDL_BlitSurface(image,&leftR,imagedest,NULL);
-        //SDL_SaveBMP(imagedest,"final_square.bmp");
-	//SDL_Surface *image2=SDL_LoadBMP("final_square.bmp");
-        //IMG_SavePNG(image2,"final_square.png");
-	//SDL_FreeSurface(imagedest);
-        //SDL_FreeSurface(image);
-
-//	return image2;
-
-//	SDL_FreeSurface(image2);
-

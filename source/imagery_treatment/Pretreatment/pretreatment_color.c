@@ -152,7 +152,7 @@ int otsu_tresholding(SDL_Surface *image){
 
 void binarize(SDL_Surface *image){
 	int tresh=otsu_tresholding(image);
-	float t=(float) tresh*(6.5/10.0);
+	float t=(float) tresh*(8.5/10.0);
 	int black_p=0;
 	int white_p=0;
 	for(int i = 0; i<image->w;i++){
