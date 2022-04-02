@@ -1,5 +1,4 @@
 #include "../../include/neural_network/XOR.h"
-#include <math.h>
 
 double XOR_front_propagation(Network* network, double inputs[]){
 	// add the inputs in the neural network
@@ -34,29 +33,32 @@ void XOR_trainning(Network* network, double eta, unsigned int epochs){
 	double expectedList[] = {0, 1, 1, 0};
 	double cost = 0;
 
-	for(unsigned int i = 0; i < 4; i++){
-		printf("for the inputs %f | %f\nThe result is %f and the expected result is: %f\n",
-		inputsList[i][0], inputsList[i][1], XOR_front_propagation(network,
-		inputsList[i]), expectedList[i]);
-	}
-
 	for(unsigned int i = 0; i < epochs; i++){
 		for(unsigned int j = 0; j < 4; j++){
 			XOR_front_propagation(network, inputsList[j]);
 			double expected[1] = {expectedList[j]};
-			cost += cost_function(network, expected);
+			cost += cost_function(network, expected) / 4;
 			back_propagation(network, expected);
 			update(network, eta);
 		}
-		if(i % 500 == 0){
-			printf("the cost of the neural network is: %f\n", cost);
+		if(i % 1000 == 0){
+			printf("EPOCH NUMBER %i/%i\n", i, epochs);
+			for(unsigned int j = 0; j < 4; j++){
+				printf("%f XOR %f | result: %f | expected: %f\n",
+				inputsList[j][0], inputsList[j][1], XOR_front_propagation(network,
+				inputsList[j]), expectedList[j]);
+ 			}
+			printf("the cost of the neural network is: %f\n\n", cost);
 		}
 		cost = 0;
 	}
-
-	for(unsigned int i = 0; i < 4; i++){
-		printf("for the inputs %f | %f\nThe result is %f and the expected result is: %f\n",
-		inputsList[i][0], inputsList[i][1], XOR_front_propagation(network,
-		inputsList[i]), expectedList[i]);
-	}
+	printf("EPOCH NUMBER %i/%i\n", epochs, epochs);
+		for(unsigned int j = 0; j < 4; j++){
+			printf("%f XOR %f | result: %f | expected: %f\n",
+			inputsList[j][0], inputsList[j][1], XOR_front_propagation(network,
+			inputsList[j]), expectedList[j]);
+			double expected[1] = {expectedList[j]};
+			cost += cost_function(network, expected) / 4;
+ 		}
+		printf("the cost of the neural network is: %f\n", cost);
 }
