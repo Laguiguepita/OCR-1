@@ -1,15 +1,20 @@
-# Simple SDL mini Makefile
+# Simple mini Makefile
 
-CC=gcc-Wall -Wextra -Werror -std=c99 -O1 -o
+CC=gcc
+
+CPPFLAGS= `pkg-config --cflags sdl` -MMD
+CFLAGS= -Wall -Wextra -Werror -std=c99 -O3
+LDFLAGS=
+LDLIBS= `pkg-config --libs sdl SDL_image`
+
+all: solver
+
+solver:solver.o
 
 
-
-
-all: main
-
-main: sudoku_solver.c 
 clean:
 	${RM} *.o
 	${RM} *.d
-	${RM} main
+	${RM} solver
+
 # END
