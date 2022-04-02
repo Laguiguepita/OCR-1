@@ -3,7 +3,7 @@
 
 #include "neural_network.h"
 
-double feedforward(Network* network, double inputs[]);
-void trainning(Network* network, double eta, unsigned int epochs);
+double XOR_front_propagation(Network* network, double inputs[]);
+void XOR_trainning(Network* network, double eta, unsigned int epochs);
 
 #endif
