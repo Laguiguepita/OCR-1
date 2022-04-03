@@ -53,11 +53,22 @@ int main(){
     update_surface(screen_surface, image_surface);
     //SDL_Surface* image;
     detect(image_surface);
+   /* SDL_Surface * image2;
+    image2=load_image("final_square.bmp");
+    detect(image2);
     wait_for_keypressed();
-
+    update_surface(screen_surface ,image2);
+    wait_for_keypressed();
+    SDL_Surface * image3;
+    image3=load_image("final_square.bmp");
+    detect(image3);
+    wait_for_keypressed();
+    update_surface(screen_surface ,image3);
+    wait_for_keypressed();
+*/
     //update_surface(screen_surface, image);
     
-    //wait_for_keypressed();
+    wait_for_keypressed();
     SDL_FreeSurface(image_surface);                                             
     SDL_FreeSurface(screen_surface);
     
