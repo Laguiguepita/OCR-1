@@ -3,8 +3,15 @@
 
 #include "neural_network.h"
 
-void load_label();
-void load_image();
-void print_image(unsigned char image[28][28]);
+typedef struct Data_set{
+    double **training_images, **test_images;
+    unsigned char *training_labels, *test_labels;
+} Data_set;
+
+
+Data_set* initData_set();
+void load_labels(Data_set* data, char name[], int isTrainingSet);
+void load_images(Data_set* data, char name[], int isTrainingSet);
+void print_image(unsigned char** image);
 
 #endif
