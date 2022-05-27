@@ -15,12 +15,20 @@ Neuron* newNeuron(unsigned int nb_weights){
 	neuron->nb_weights = nb_weights;
 	neuron->bias = 0;
 	neuron->activation = 0;
-	neuron->delta = 0;
+	neuron->delta_temp = 0;
+	neuron->delta_bias = 0;
 	neuron->weights = NULL;
+	neuron->delta_weights = NULL;
 
 	// allocating memory for the weights
 	neuron->weights = malloc(sizeof(double) * nb_weights);
 	if(neuron->weights == NULL){
+		errx(EXIT_FAILURE, "Not enough memory!");
+	}
+
+	// allocating memory for the delta weights
+	neuron->delta_weights = malloc(sizeof(double) * nb_weights);
+	if(neuron->delta_weights == NULL){
 		errx(EXIT_FAILURE, "Not enough memory!");
 	}
 
@@ -101,16 +109,18 @@ Network* initNetwork(unsigned int sizes[], unsigned int nb_layers){
 
 	srand(time(NULL));
 	for(unsigned int i = 1; i < network->nb_layers; i++){
+		double min = -1 / sqrt(network->layers[i]->neurons[0]->nb_weights);
+		double max = 1 / sqrt(network->layers[i]->neurons[0]->nb_weights);
+		double range = (max - min);
+		double div = RAND_MAX / range;
 		for(unsigned int j = 0; j < network->layers[i]->nb_neurons; j++){
 			for(unsigned int l = 0;
 			l < network->layers[i]->neurons[j]->nb_weights; l++){
 				network->layers[i]->neurons[j]->weights[l] =
-				 ((double)rand()/(double)(RAND_MAX)) * 3 
-				 * pow(-1, rand() % 2);
+				 min + (rand() / div);
+                 //printf("ids %f\n", network->layers[i]->neurons[j]->weights[l]);
 			}
-			network->layers[i]->neurons[j]->bias =
-			 ((double)rand()/(double)(RAND_MAX)) * 3
-			 * pow(-1, rand() % 2);
+			network->layers[i]->neurons[j]->bias = 0;
 		}
 	}
 
@@ -122,6 +132,7 @@ void freeNetwork(Network* network){
 	for(unsigned int i = 0; i < network->nb_layers; i++){
 		for(unsigned int j = 0; j < network->layers[i]->nb_neurons; j++){
 			free(network->layers[i]->neurons[j]->weights);
+			free(network->layers[i]->neurons[j]->delta_weights);
 		}
 		free(network->layers[i]->neurons);
 	}
@@ -139,14 +150,16 @@ double sigmoid_prime(double x){
 	return x * (1 - x);
 }
 
-void softmax(Layer* layer){
+int softmax(Layer* layer){
 	unsigned int nb_neurons = layer->nb_neurons;
 
-	// try to find the max value of neurons
+	// try to find the max value of neurons and his index
+    int index = 0;
 	double max = layer->neurons[0]->activation;
 	for(unsigned int i = 1; i < nb_neurons; i++){
 		if(max < layer->neurons[i]->activation){
 			max = layer->neurons[i]->activation;
+            index = i;
 		}
 	}
 
@@ -166,10 +179,11 @@ void softmax(Layer* layer){
 		layer->neurons[i]->activation = 
 			(exp(layer->neurons[i]->activation)) / divisor;
 	}
+    return index;
 }
 
 // ----------------------------NEURAL NETWORK FUNCTIONS-----------------------
-void front_propagation(Network* network, double inputs[]){
+int front_propagation(Network* network, double inputs[]){
 	// add the inputs in the neural network
 	unsigned int nb_layers = network->nb_layers;
 	for(unsigned int i = 0; i < network->layers[0]->nb_neurons; i++){
@@ -178,7 +192,7 @@ void front_propagation(Network* network, double inputs[]){
 	double sum = 0;
 	// proceed to the front_propagation for the hiddens layers
 	// the loop don't go into the first layer and the last layer
-	for(unsigned int i = 1; i < nb_layers - 1; i++){
+	for(unsigned int i = 1; i < nb_layers; i++){
 		for(unsigned int j = 0; j < network->layers[i]->nb_neurons; j++){
 			for(unsigned int l = 0;
 			l < network->layers[i]->neurons[j]->nb_weights; l++){
@@ -194,6 +208,7 @@ void front_propagation(Network* network, double inputs[]){
 			sum = 0;
 		}
 	}
+
 	// same as upper but we don't do the sigmoid func
 	for(unsigned int i = 0; i < network->layers[nb_layers - 1]->nb_neurons; i++){
 		for(unsigned int j = 0;
@@ -206,22 +221,40 @@ void front_propagation(Network* network, double inputs[]){
 		network->layers[nb_layers - 1]->neurons[i]->activation = sum;
 		sum = 0;
 	}
-	softmax(network->layers[nb_layers - 1]);
-	for(unsigned int i = 0; i < network->layers[nb_layers - 1]->nb_neurons; i++){
-		printf("the output neuron number %i as a probability of: %f\n", i + 1,
-		network->layers[network->nb_layers - 1]->neurons[i]->activation);
-	}
+	return softmax(network->layers[nb_layers - 1]);
+/*
+    int index = 0;
+    double max = network->layers[nb_layers - 1]->neurons[0]->activation;
+    for(unsigned int i = 1; i < network->layers[nb_layers - 1]->nb_neurons; i++){
+        if(max < network->layers[nb_layers - 1]->neurons[i]->activation){
+            max = network->layers[nb_layers - 1]->neurons[i]->activation;
+            index = i;
+        } 
+    }
+    return index;
+*/
 }
 
 
 // ------------------------NEURAL NETWORK LEARNING FUNCTIONS-------------------
-double cost_function(Network* network, double expected[]){
+double cost_function(Network* network, double expected[], double size){
 	double cost = 0;
 	for(unsigned int i = 0; i < network->layers[network->nb_layers - 1]->nb_neurons; i++){
-		cost += 
-		(network->layers[network->nb_layers - 1]->neurons[i]->activation - expected[i]) *
-		(network->layers[network->nb_layers - 1]->neurons[i]->activation - expected[i]);
-	}
+
+        cost += (expected[i] - network->layers[network->nb_layers - 1]->neurons[i]->activation)
+             * (expected[i] - network->layers[network->nb_layers - 1]->neurons[i]->activation)
+            / (size);
+/*
+
+    if(expected[i] == 1){
+        cost += (- log( network->layers[network->nb_layers - 1]->neurons[i]->activation)) / size;
+        
+	    }
+    else{
+        cost += (- log( 1 - network->layers[network->nb_layers - 1]->neurons[i]->activation)) / size;
+    }
+*/
+    }
 	return cost;
 }
 
@@ -229,38 +262,116 @@ double cost_function(Network* network, double expected[]){
 void back_propagation(Network* network, double expected[]){
 	// the output layer
 	for(unsigned int i = 0; i < network->layers[network->nb_layers - 1]->nb_neurons; i++){
-		network->layers[network->nb_layers - 1]->neurons[i]->delta =
-		2 * (network->layers[network->nb_layers - 1]->neurons[i]->activation - expected[i]) *
-		sigmoid_prime(network->layers[network->nb_layers - 1]->neurons[i]->activation);
+        network->layers[network->nb_layers - 1]->neurons[i]->delta_temp =
+ 		 (network->layers[network->nb_layers - 1]->neurons[i]->activation - expected[i])/60000;
+	    // ----------------------------------------------------
+	    network->layers[network->nb_layers - 1]->neurons[i]->delta_bias += 
+		network->layers[network->nb_layers - 1]->neurons[i]->delta_temp;
+		for(unsigned j = 0; j < network->layers[network->nb_layers - 1]->neurons[i]->nb_weights; j++){
+			network->layers[network->nb_layers - 1]->neurons[i]->delta_weights[j] += 
+			network->layers[network->nb_layers - 1]->neurons[i]->delta_temp *
+			network->layers[network->nb_layers - 2]->neurons[j]->activation;
+		}
 	}
 	// all the hiden layers
 	for(unsigned int i = network->nb_layers - 2; i > 0; i--){
 		for(unsigned int j = 0; j < network->layers[i]->nb_neurons; j++){
 			double sum = 0;
 			for(unsigned int l = 0; l < network->layers[i+1]->nb_neurons; l++){
-				sum += network->layers[i+1]->neurons[l]->delta *
+				sum += network->layers[i+1]->neurons[l]->delta_temp *
 				network->layers[i+1]->neurons[l]->weights[j];
 			}
-			network->layers[i]->neurons[j]->delta = sum * 
+			network->layers[i]->neurons[j]->delta_temp = sum * 
 			sigmoid_prime(network->layers[i]->neurons[j]->activation);
+			// --------------------------------------------------
+			network->layers[i]->neurons[j]->delta_bias +=
+			network->layers[i]->neurons[j]->delta_temp;
+			for(unsigned int l = 0; l < network->layers[i]->neurons[j]->nb_weights; l++){
+				network->layers[i]->neurons[j]->delta_weights[l] +=
+				network->layers[i]->neurons[j]->delta_temp *
+				network->layers[i-1]->neurons[l]->activation;
+			}
 		}
 	}
 }
 
-void update(Network* network, double eta){
+void update(Network* network, double eta, double lambda){
 	// all the layers excepted the input layers
 	for(unsigned int i = network->nb_layers - 1; i > 0; i--){
 		for(unsigned int j = 0; j < network->layers[i]->nb_neurons; j++){
 			for(unsigned int l = 0; l
 			< network->layers[i]->neurons[j]->nb_weights; l++){
 				network->layers[i]->neurons[j]->weights[l] -=
-				eta *
-				network->layers[i]->neurons[j]->delta *
-				network->layers[i-1]->neurons[l]->activation;
+				eta * network->layers[i]->neurons[j]->delta_weights[l];
+				network->layers[i]->neurons[j]->delta_weights[l] = 0;
 			}
 			network->layers[i]->neurons[j]->bias -=
 			eta *
-			network->layers[i]->neurons[j]->delta;
+			network->layers[i]->neurons[j]->delta_bias + 
+			lambda * network->layers[i]->neurons[j]->bias / 60000;
+			network->layers[i]->neurons[j]->delta_bias = 0;
 		}
 	}
 }
+
+// ---------------------------- ASSISTED LEARNING ----------------------------
+
+void training(Network* network, double eta, double lambda, unsigned int epochs, unsigned int batchsize){
+    printf("Loading data set ...\n");
+    Data_set *data = initData_set();
+    printf("Data set loaded.\n");
+    double expectedList[10][10] = {
+        {1,0,0,0,0,0,0,0,0,0},
+        {0,1,0,0,0,0,0,0,0,0},
+        {0,0,1,0,0,0,0,0,0,0},
+        {0,0,0,1,0,0,0,0,0,0},
+        {0,0,0,0,1,0,0,0,0,0},
+        {0,0,0,0,0,1,0,0,0,0},
+        {0,0,0,0,0,0,1,0,0,0},
+        {0,0,0,0,0,0,0,1,0,0},
+        {0,0,0,0,0,0,0,0,1,0},
+        {0,0,0,0,0,0,0,0,0,1}};
+    double cost = 0;
+    double accuracy = 0;
+	srand(time(NULL));
+
+    printf("Starting the learning.\n");
+
+    for(unsigned int i = 0; i < epochs; i++){
+        if((i+1) % 1 == 0){
+            printf("epochs number : %u\n", i);
+        }
+        for(unsigned int j = 0; j < 60000; j++){
+            front_propagation(network, data->training_images[j]);
+            double *expected = expectedList[data->training_labels[j]];
+            cost += cost_function(network, expected, 60000);
+            back_propagation(network, expected);
+            if((j+1) % batchsize == 0){
+                update(network, eta, lambda);
+            }
+        }
+        if(i % 15 == 0){
+            printf("EPOCH NUMBER %i/%i\n", i, epochs);
+            for(unsigned int j = 0; j < 10000; j++){
+               if(front_propagation(network, data->test_images[j]) == data->test_labels[j]){
+                    accuracy++;
+               }
+            }
+            printf("the accuracy of the network is: %f\n", accuracy/10000*100);
+            printf("the cost of the neural network is: %f\n\n", cost);
+			int x = rand() % 10000;
+			front_propagation(network, data->test_images[x]);
+			printf("for a image of a : %i\n", data->test_labels[x]);
+			for(unsigned int j = 0; j < 10; j++){
+				printf("activation of the neurons[%i] = %f\n",
+				j, network->layers[network->nb_layers - 1]->neurons[j]->activation);
+			}
+			if (accuracy/10000*100 >= 95){
+				break;
+			}
+            accuracy = 0;
+        }
+    cost = 0;
+    }
+}
+

@@ -8,11 +8,12 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <time.h>
+#include "../../include/neural_network/data_set.h"
 
 typedef struct Neuron{
 	unsigned int nb_weights;
-	double bias, activation, delta;
-	double* weights;
+	double bias, activation, delta_bias, delta_temp;
+	double* weights,* delta_weights;
 } Neuron;
 
 Neuron* newNeuron(unsigned int nb_weights);
@@ -40,19 +41,20 @@ Network* initNetwork(unsigned int sizes[], unsigned int nb_layers);
 void freeNetwork(Network* network);
 
 
-void front_propagation(Network* network, double inputs[]);
+int front_propagation(Network* network, double inputs[]);
 
 double sigmoid(double x);
 
 double sigmoid_prime(double x);
 
-void softmax(Layer* layer);
+int softmax(Layer* layer);
 
-double cost_function(Network* network, double expected[]);
+double cost_function(Network* network, double expected[], double size);
 
 void back_propagation(Network* network, double expected[]);
 
-void update(Network* network, double eta);
+void update(Network* network, double eta, double lambda);
 
+void training(Network* network, double eta, double lambda, unsigned int epochs, unsigned int batchsize);
 
 #endif

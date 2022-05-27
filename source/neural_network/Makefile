@@ -8,7 +8,7 @@ neural_network.o: neural_network.c
 	gcc -Wall -Wextra -Werror -c neural_network.c
 
 save_and_load.o: save_and_load.c
-	gcc -Wall -Wextra -Werror -c save_and_load.c
+	gcc -Wall -Wextra -c save_and_load.c
 
 XOR.o: XOR.c
 	gcc -Wall -Wextra -Werror -c XOR.c

@@ -1,7 +1,7 @@
 #include "../../include/neural_network/save_and_load.h"
 #include <math.h>
 
-#define MAX_LENGTH 6000
+#define MAX_LENGTH 10000
 
 void saveNetwork(Network* network, char name[]){
 	// try to open the file
@@ -82,7 +82,8 @@ Network* loadNetwork(char name[]){
 	unsigned int layerIndex = 0;
 	unsigned int neuronIndex = 0;
 	unsigned int weightIndex = 0;
-	while(fgets(text, MAX_LENGTH, file)){
+
+	while(fgets(text, MAX_LENGTH, file)){	
 		if(strcmp(text, "\n") == 0){
 			continue;
 		}
@@ -104,8 +105,8 @@ Network* loadNetwork(char name[]){
 			weightIndex = 0;
 			neuronIndex++;
 		}
-	}
 	
+	}
 	// closing the file
 	fclose(file);
 
