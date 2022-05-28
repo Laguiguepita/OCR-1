@@ -3,12 +3,10 @@
 
 #define MAX_LENGTH 10000
 
-void saveNetwork(Network* network, char name[]){
+void saveNetwork(Network* network, char path[]){
 	// try to open the file
 	FILE* file = NULL;
-	char destination[60] = "saves/";
-	strcat(destination, name);
-	file = fopen(destination, "w+");
+	file = fopen(path, "w+");
 	if(file == NULL){
     		errx(1, "failed to open the file");
 	}
@@ -40,12 +38,10 @@ void saveNetwork(Network* network, char name[]){
 
 
 
-Network* loadNetwork(char name[]){
+Network* loadNetwork(char path[]){
 	// try to open the file
 	FILE* file = NULL;
-	char destination[60] = "saves/";
-	strcat(destination, name);
-	file = fopen(destination, "r");
+	file = fopen(path, "r");
 	if(file == NULL){
 		errx(1, "failed to open the file");
 	}
