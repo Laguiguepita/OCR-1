@@ -16,21 +16,19 @@ Data_set* initData_set(){
 
 
     // allocate memory and collect data
-    load_images(data, "train-images", 1);
-    load_labels(data, "train-labels", 1);
-    load_images(data, "test-images", 0);
-    load_labels(data, "test-labels", 0);
+    load_images(data, "./data/train-images", 1);
+    load_labels(data, "./data/train-labels", 1);
+    load_images(data, "./data/test-images", 0);
+    load_labels(data, "./data/test-labels", 0);
 
     return data;
 }
 
 
-void load_labels(Data_set* data, char name[], int isTrainingSet){
+void load_labels(Data_set* data, char path[], int isTrainingSet){
 	// try to open the file
 	FILE* file = NULL;
-    char destination[60] = "data/";
-    strcat(destination, name);
-	file = fopen(destination, "rb");
+	file = fopen(path, "rb");
 	if(file == NULL){
 		errx(EXIT_FAILURE, "failed to open the file");
 	}
@@ -73,12 +71,10 @@ void load_labels(Data_set* data, char name[], int isTrainingSet){
 	fclose(file);
 }
 
-void load_images(Data_set* data, char name[], int isTrainingSet){
+void load_images(Data_set* data, char path[], int isTrainingSet){
 	// try to open the file
 	FILE* file = NULL;
-    char destination[60] = "data/";
-    strcat(destination, name);
-	file = fopen(destination, "rb");
+	file = fopen(path, "rb");
 	if(file == NULL){
 		errx(EXIT_FAILURE, "failed to open the file");
 	}
@@ -167,12 +163,25 @@ void load_images(Data_set* data, char name[], int isTrainingSet){
 	fclose(file);
 }
 
+void freeData_set(Data_set *data){
+	// free training labels
+	free(data->training_labels);
 
-void print_image(unsigned char** image){
-	for(int i = 0; i < 28; i++){
-		for(int j = 0; j < 28; j++){
-			printf("%3u ", image[i][j]);
-		}
-		printf("\n");
+	// free test labels
+	free(data->test_labels);
+
+	// free test images
+	for(int i = 0; i < 10000; i++){
+		free(data->test_images[i]);
 	}
+	free(data->test_images);
+
+	// free training images
+	for(int i = 0; i < 60000; i++){
+		free(data->training_images[i]);
+	}
+	free(data->training_images);
+
+	// free Data_set struct
+	free(data);
 }

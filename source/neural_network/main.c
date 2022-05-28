@@ -43,29 +43,44 @@ int main(){
 	//if(network != NULL){
 	//	freeNetwork(network);
 	//}
-
-
 /*
 
     Data_set* data = initData_set();
-    printf("%u\n", data->training_labels[59999]);
+    printf("%u\n", data->training_labels[5999]);
     for(int i = 0; i < 784; i++){
         printf("%3g ", data->training_images[5999][i]);
         if((i+1) % 28 == 0)
             printf("\n");
     }
-*/	
 
+*/
 
+	Data_set *data = initData_set();
+	srand(time(NULL));
 //	unsigned int sizes[] = {784,120,10};
-//	Network* network = initNetwork(sizes, sizeof(sizes)/sizeof(unsigned int));
-	Network* network = loadNetwork("test1");
+//	Network *network = initNetwork(sizes, sizeof(sizes)/sizeof(unsigned int));
+	Network *network = loadNetwork("./saves/test1");
 	//saveNetwork(network, "test1");
-	
-    training(network, 0.10000, 5.0, 50, 1);
+
+	int x = rand() % 10000;
+	for(int i = 0; i < 784; i++){
+        printf("%3g ", data->test_images[x][i]);
+        if((i+1) % 28 == 0)
+            printf("\n");
+    }
+	printf("for an image of a : %u\n", data->test_labels[x]);
+	int result = front_propagation(network, data->test_images[x]);
+	for(int i = 0; i < 10; i++){
+		printf("the propability that image is a %i is : %f\n", i, network->layers[network->nb_layers - 1]->neurons[i]->activation);
+	}
+	printf("\nResult: this image is a %i\n", result);
+
+
+//    training(network, 0.10000, 5.0, 50, 1);
 	//XOR_trainning(network, 0.3, 100000);
 	//feedforward(network, inputs);
-	saveNetwork(network, "test2");
+//	saveNetwork(network, "test2");
 	freeNetwork(network);
+	freeData_set(data);
 	return 0;
 }

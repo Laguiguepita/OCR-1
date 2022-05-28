@@ -10,8 +10,8 @@ typedef struct Data_set{
 
 
 Data_set* initData_set();
-void load_labels(Data_set* data, char name[], int isTrainingSet);
-void load_images(Data_set* data, char name[], int isTrainingSet);
-void print_image(unsigned char** image);
+void load_labels(Data_set* data, char path[], int isTrainingSet);
+void load_images(Data_set* data, char path[], int isTrainingSet);
+void freeData_set(Data_set *data);
 
 #endif
