@@ -9,8 +9,11 @@
 #include "segmentation.h"
 
 #define PI 3.14159265358979
-void houghTransformation(SDL_Surface* image)
+void houghTransformation(char *path)
 {
+    SDL_Surface *image;
+    init_sdl();
+    image=load_image(path);
     int width = image->w;
     int height = image->h;
     int diagonale = floor(sqrt((double) (width * width + height * height)));
@@ -153,6 +156,7 @@ void houghTransformation(SDL_Surface* image)
     //SDL_FreeSurface(intersection);
     //SDL_FreeSurface(image);
     //SDL_FreeSurface(houghSpace);
+    SDL_SaveBMP(image,path);
 }
 int* right_corner(SDL_Surface *image,int i,int j,int height,int* length){
 		

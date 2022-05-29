@@ -4,7 +4,10 @@
 #include "pixel_operations.h"
 #include "sdl_functions.h"
 
-void grayscale(SDL_Surface *image_surface){
+void grayscale(char *path){
+	SDL_Surface *image_surface;
+	init_sdl();
+	image_surface=load_image(path);
 	for(int i = 0; i<image_surface->w;i++){                                     
              for(int j = 0; j<image_surface->h;j++){                             
                      Uint32 pixel = get_pixel(image_surface, i, j);              
@@ -14,5 +17,6 @@ void grayscale(SDL_Surface *image_surface){
                      Uint32 pixel2 = SDL_MapRGB(image_surface->format, average, average, average);
                      put_pixel(image_surface, i, j, pixel2);                     
              }                                                                   
-     } 
+     }
+     SDL_SaveBMP(image_surface,path); 
 }

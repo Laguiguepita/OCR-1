@@ -3,8 +3,8 @@
 
 #include "neural_network.h"
 
-void saveNetwork(Network* network, char path[]);
+void saveNetwork(Network* network, char name[]);
 
-Network* loadNetwork(char path[]);
+Network* loadNetwork(char name[]);
 
 #endif

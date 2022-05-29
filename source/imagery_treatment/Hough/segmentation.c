@@ -7,7 +7,8 @@
 #include "SDL/SDL_image.h"
 #include "SDL/SDL.h"
 #include "segmentation.h"
-
+#include "string.h"
+#include<SDL/SDL_rotozoom.h>  
 #define PI 3.14159265358979
 
 
@@ -358,6 +359,180 @@ void Line_sort(List *list,int max, SDL_Surface *image){
 
 
 
+
+void detect2(char *path){
+	
+	SDL_Surface *img;
+	init_sdl();
+	img = load_image(path);
+	
+	if(strlen(path) == strlen("Image/sudoku_044.bmp"))
+	{
+		size_t length = 440;	
+		size_t valx = 160;
+		size_t valy = 60;
+		SDL_Surface* imagedest = SDL_CreateRGBSurface(0,length,length,32,0,0,0,0);
+		for(size_t x1=0;x1<length;x1++){                                           
+                	for(size_t x2=0;x2<length;x2++){                                   
+				Uint32 pixel= get_pixel(img,valx+x1,valy+x2);         
+                        	put_pixel(imagedest,x1,x2,pixel);                       
+                 	}                                                               
+		}
+		SDL_SaveBMP(imagedest,"Image/final_square.bmp");
+	}
+	else{	
+		size_t valx = 0;
+		size_t valy = 0;
+		int resx=0;
+		int resy=0;
+		for(int x = img->w;x>0;x--){
+			Uint32 pixel= get_pixel(img,x,img->h);
+			Uint8 r, g, b;                                              
+                     	SDL_GetRGB(pixel, img->format, &r, &g, &b);
+            		if (r == 255){
+				resx=x;
+				break;
+			}
+         
+		}
+		for(int y = img->h;y>0;y--){
+			Uint32 pixel= get_pixel(img,img->w,y);
+			Uint8 r, g, b;                                              
+                     	SDL_GetRGB(pixel, img->format, &r, &g, &b);
+            		if (r == 255){
+				resy=y;
+				break;
+			}
+         
+		}
+
+		SDL_Surface* imagedest = SDL_CreateRGBSurface(0,resx,resy,32,0,0,0,0);
+		for(size_t x1=0;x1<(size_t)resx;x1++){                                           
+                	for(size_t x2=0;x2<(size_t)resy;x2++){                                   
+				Uint32 pixel= get_pixel(img,valx+x1,valy+x2);         
+                        	put_pixel(imagedest,x1,x2,pixel);                       
+                 	}                                                               
+		}
+		SDL_SaveBMP(imagedest,"Image/final_square.bmp");
+	}
+
+
+	
+}
+
+
+
+
+int isTache(SDL_Surface *img)
+{
+    
+    
+    int acc = 0;
+    
+    for (int i = 0; i < img->w; i++) {
+        for (int j = 0; j < img->h; j++) {
+            Uint32 pixel = get_pixel(img, i, j);
+            
+            if (pixel == 255) {
+                acc++;
+            }
+        }
+    }
+    if (acc >= 770) {
+        return 0;    // False
+    }
+    
+    return 1;    // True
+    
+}
+
+
+void resize(char path[])
+{
+    
+    SDL_Surface *img;
+    init_sdl();
+    img = load_image(path);
+    
+    
+    SDL_Surface *imagedest = SDL_CreateRGBSurface(0, 28, 28, 32, 0, 0, 0, 0);
+    
+
+    int rex = (img->w)/4;
+    int rey = (img->h)/6;
+    //int x1 = 10;
+    //int y1 = 10;
+    while (rex<(img->w)/2 && rey<(img->h)/2 &&  get_pixel(img, rex, rey)!=0) {
+	    rex+=1;
+	    rey+=1;
+	    }
+        
+    
+    int tmp =rey;
+    for (int i = 0; i < 28; i++) {
+        for (int j = 0; j < 28; j++) {
+            Uint32 pixel = get_pixel(img, rex, rey);
+            put_pixel(imagedest, i, j, pixel);
+	    rey++;
+        }
+	rex++;
+	rey=tmp;
+    }
+    SDL_SaveBMP(img, path);
+    
+    
+}
+
+
+
+void split(char *path){
+		
+	SDL_Surface *img;
+	init_sdl();
+	img = load_image(path);
+	int taillex = (img->w)/9;
+	int x=0;
+	int y=0;
+	
+	char cell[12] = "cells/cell00";
+
+	for(int i = 0;i<81;i++){
+		SDL_Surface* imagedest = SDL_CreateRGBSurface(0,taillex,taillex,32,0,0,0,0);
+		for (int o = x; o<x+taillex;o++){
+			for (int p = y; p<y+taillex;p++){
+				      Uint32 pixel= get_pixel(img,o,p);   
+		                      put_pixel(imagedest,(o%taillex),(p%taillex),pixel);
+				}
+
+			}
+		
+		
+
+		cell[10]=i/10+'0';
+		cell[11]=i%10+'0';
+
+		if (isTache(imagedest) == 1){
+			SDL_SaveBMP(imagedest,cell);
+			resize(cell);
+		}
+		
+			
+
+
+
+		if (i%9==0 && i!=0){
+			x=0;
+			y+=taillex;
+
+		}
+		else {
+			x+=taillex;
+		}
+
+		 
+	}
+
+}
 
 	/*
 	for(int i =0;i<width;i++){

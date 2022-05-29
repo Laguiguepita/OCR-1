@@ -14,7 +14,7 @@ int main(){
     //SDL_Surface* image_surface2;                                                                             
     init_sdl();                                                                 
                                                                                 
-    image_surface = load_image("my_image.png");                                 
+    image_surface = load_image("Image/sudoku_01.bmp");                                 
     screen_surface = display_image(image_surface);                              
     //image_surface2 = load_image("my_image.png"); 
 
@@ -52,7 +52,12 @@ int main(){
     houghTransformation(image_surface);
     update_surface(screen_surface, image_surface);
     //SDL_Surface* image;
-    detect(image_surface);
+
+//	SDL_FreeSurface(image_surface);
+
+    SDL_SaveBMP(image_surface,"Image/sudoku_01.bmp");	
+    detect2("Image/sudoku_01.bmp");
+    split("Image/sudokuu_01.bmp");
    /* SDL_Surface * image2;
     image2=load_image("final_square.bmp");
     detect(image2);
