@@ -149,9 +149,11 @@ void split(char *path){
 		 cell[12] = '\0';                                              
 
                  if (isTache(imagedest) == 1){
+			
 			Save_Image(imagedest,cell);
-			invert(imagedest);
-                        resize(cell);                                           
+                        invert(cell);
+			resize2(cell, cell, 28, 28);
+			clean(cell);                                           
                  }                                                               
                                                                                 
                                                                                  
@@ -172,12 +174,45 @@ void split(char *path){
 }
 
 
+void resize2(char oldPath[], char newPath[], int newW, int newH)
+{
+	SDL_Surface *old = load_image(oldPath);
+
+	int oldW = old->w;
+	int oldH = old->h;
+
+	Create_image(newPath, newW, newH, 0, 0, 0);
+
+	SDL_Surface *new = load_image(newPath);
+
+
+	for (int newY = 0; newY < newH; newY++)
+	{
+		for (int newX = 0; newX < newW; newX++)
+		{
+			int oldX = newX * oldW / newW;
+			int oldY = newY * oldH / newH;
+
+			Uint32 pixel = get_pixel(old, oldX, oldY);
+
+			put_pixel(new, newX, newY, pixel);
+
+		}
+	}
+
+	Save_Image(new, newPath);
+
+
+}
+
+
+
 
 void clean(char path[])
 {
 	SDL_Surface *img;
 	init_sdl();
-	img = load_image();
+	img = load_image(path);
 
 	int taille = 5;
 	
