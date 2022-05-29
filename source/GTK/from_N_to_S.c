@@ -153,7 +153,7 @@ void split(char *path){
 			Save_Image(imagedest,cell);
                         invert(cell);
 			resize2(cell, cell, 28, 28);
-			clean(cell);                                           
+			//clean(cell);                                           
                  }                                                               
                                                                                 
                                                                                  
