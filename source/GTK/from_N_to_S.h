@@ -4,7 +4,7 @@
 
 struct list
 {
-	char name[6];
+	char name[50];
 };
 
 
@@ -15,5 +15,5 @@ double* auxiliaire(char path[]);
 void matrix_to_file(int matrix[], char *path);
 void list_to_file(struct list *list, int matrix[]);
 void main_from();
-
+void split(char *path);
 #endif

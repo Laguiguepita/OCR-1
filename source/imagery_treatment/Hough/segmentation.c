@@ -429,17 +429,20 @@ int isTache(SDL_Surface *img)
     
     
     int acc = 0;
-    
-    for (int i = 0; i < img->w; i++) {
-        for (int j = 0; j < img->h; j++) {
+    int brute = 7; 
+    for (int i = brute; i < img->w-brute; i++) {
+        for (int j = brute; j < img->h-brute; j++) {
             Uint32 pixel = get_pixel(img, i, j);
-            
-            if (pixel == 255) {
+            Uint8 r, g, b;                                          
+            SDL_GetRGB(pixel, img->format, &r, &g, &b);
+            if (r == 0 && g == 0 && b == 0) {
                 acc++;
             }
         }
     }
-    if (acc >= 770) {
+    float ratio=(float)acc/(float)((img->w-brute)*(img->h-brute))*100;
+    printf("%f\n",ratio);
+    if (ratio > 70.7) {
         return 0;    // False
     }
     
@@ -485,7 +488,7 @@ void resize(char path[])
 }
 
 
-
+/*
 void split(char *path){
 		
 	SDL_Surface *img;
@@ -534,7 +537,7 @@ void split(char *path){
 	}
 
 }
-
+*/
 	/*
 	for(int i =0;i<width;i++){
 		for(int j=0;j<height;j++){

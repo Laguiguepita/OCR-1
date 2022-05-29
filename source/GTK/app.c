@@ -239,8 +239,8 @@ void print_result_GTK(char string_stage[])
 			//Filter_step(image_treatment, 3);
 			brightness(image_treatment);
                         median_filter(image_treatment);
-                        binarize(image_treatment);
-                        invert(image_treatment);
+                        //binarize(image_treatment);
+                        //invert(image_treatment);
 			display_image_GTK(image_treatment);
 			break;
 		case 4:
@@ -305,7 +305,7 @@ void print_result_GTK(char string_stage[])
 			else
 				strcpy(string_stage, "Grid detection: failed");
 			//display_image_GTK(image_copy);*/
-			houghTransformation(image_copy);
+			houghTransformation(image_treatment);
 			break;
 		case 10 :
 			// Display image_treatment
@@ -316,24 +316,24 @@ void print_result_GTK(char string_stage[])
 			// Autorotate
 			strcpy(string_stage, "Auto rotate: ok");
 			//Autorotate(image_result, &e);
-			display_image_GTK(image_result);
+			display_image_GTK(image_treatment);
 			break;
 		case 12:
 			// Contrast
 			strcpy(string_stage, "Contrast: ok");
 			//Filter_step(image_result, 6);
-			display_image_GTK(image_result);
+			display_image_GTK(image_treatment);
 			break;
 		case 13:
 			// Black and white
 			strcpy(string_stage, "Black and white: ok");
 			//Filter_step(image_result, 7);
-			//display_image_GTK(image_result);
+			display_image_GTK(image_treatment);
 			break;
 		case 14:
 			// Split
 			strcpy(string_stage, "Split of sudoku: ok");
-			split(image_result);
+			split(image_treatment);
 			display_image_GTK("Image/final_square.bmp");
 			break;
 		case 15:

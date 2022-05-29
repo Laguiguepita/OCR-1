@@ -8,7 +8,7 @@
 #include "pretreatment_color.h"
 #include "../Hough/segmentation.h"
 #include "../Hough/hough.h"
-
+#include "../../GTK/from_N_to_S.h"
 void main_test(){
     SDL_Surface* image_surface;                                                 
     SDL_Surface* screen_surface;                                                

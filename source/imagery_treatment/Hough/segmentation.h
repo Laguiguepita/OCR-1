@@ -27,7 +27,7 @@ void Line_sort(List *list,int max, SDL_Surface *image);
 void detect2(char path[]);
 int isTache(SDL_Surface *img);
 void resize(char path[]);
-void split(char path[]);
+//void split(char path[]);
 
 
 

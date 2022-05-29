@@ -8,6 +8,8 @@
 #include "../../include/neural_network/neural_network.h"
 #include "../../include/sudoku_solver/solver.h"
 #include "../imagery_treatment/Pretreatment/image_operations.h"
+#include "../imagery_treatment/Hough/segmentation.h"
+
 
 struct list *cell_to_list(char path[])
 {
@@ -73,7 +75,7 @@ void list_to_file(struct list *list, int matrix[])
 	printf("3,5\n");
 	while(list[i].name[0] != '\0')
 	{
-		nombre = (list[i].name[4] - '0') * 10 + (list[i].name[5] - '0');
+		nombre = (list[i].name[5] - '0') * 10 + (list[i].name[6] - '0');
 		
 		matrix[nombre] = front_propagation(network, auxiliaire(list[i].name));
 		i++;
@@ -93,3 +95,52 @@ void main_from() {
 	list_to_file(cell_to_list(path), sudoku);
 	free(sudoku);
 }
+void split(char *path){                                                         
+                                                                                 
+         SDL_Surface *img;                                                       
+         init_sdl();                                                             
+         img = load_image(path);                                                 
+         int taillex = (img->w)/9;                                               
+         int x=0;                                                                
+         int y=0;                                                                
+                                                                                 
+         char cell[13] = "cells/cell00";                                         
+         int t=1;                                                                        
+         for(int i = 0;i<81;i++){                                                
+                SDL_Surface* imagedest = SDL_CreateRGBSurface(0,taillex,taillex,32,0,0,0,0);
+                 for (int o = x; o<x+taillex;o++){                               
+                         for (int p = y; p<y+taillex;p++){                       
+                                       Uint32 pixel= get_pixel(img,o,p);         
+                                       put_pixel(imagedest,(o%taillex),(p%taillex),pixel);
+                                }                                               
+                                                                                 
+                        }                                                       
+                                                                                
+                 printf("%d, %d, %d\n",i, i/10+'0', i%10+'0');                                             
+                                                                                
+                 cell[10]=i/10+'0';                                              
+                 cell[11]=i%10+'0';
+		 cell[12] = '\0';                                              
+
+                 if (isTache(imagedest) == 1){
+			Save_Image(imagedest,cell);                            
+                         resize(cell);                                           
+                 }                                                               
+                                                                                
+                                                                                 
+                                                                                 
+                 if (i==(t*9)-1){                                            
+                        x=0;                                                    
+                        y+=taillex;
+			t++;                                             
+                                                                                
+                }                                                               
+              else {                                                          
+                         x+=taillex;                                             
+                 }                                                               
+                                                                                
+                                                                                
+         }                                                                       
+                                                                                 
+}                                                                               
+         
