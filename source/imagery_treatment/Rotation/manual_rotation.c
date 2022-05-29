@@ -4,9 +4,13 @@
 #include<SDL/SDL_rotozoom.h>
 #include<SDL/SDL_image.h>
 #include<string.h>
-
-SDL_Surface *manual_rotation(SDL_Surface *image, double angle){
-	return rotozoomSurface(image,angle,1.0,1.0);
+#include "../Pretreatment/image_operations.h"
+void manual_rotation(char *path, double angle){
+	SDL_Surface *image;
+	init_sdl();
+	image=load_image(path);
+	image = rotozoomSurface(image,angle,1.0,1.0);
+	Save_Image(image,path);
 }
 
 /*int main(){

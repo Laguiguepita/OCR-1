@@ -1,14 +1,15 @@
 #include <err.h>                                                                
 #include "SDL/SDL.h"                                                            
 #include "SDL/SDL_image.h"                                                      
-#include "pixel_operations.h"                                                   
-#include "sdl_functions.h"
+//#include "pixel_operations.h"                                                   
+//#include "sdl_functions.h"
+#include "image_operations.h"
 #include "grayscale.h"
 #include "pretreatment_color.h"
 #include "../Hough/segmentation.h"
 #include "../Hough/hough.h"
 
-int main(){
+void main_test(){
     SDL_Surface* image_surface;                                                 
     SDL_Surface* screen_surface;                                                
     //SDL_Surface* image_surface2;                                                                             
@@ -19,19 +20,19 @@ int main(){
     //image_surface2 = load_image("my_image.png"); 
 
     wait_for_keypressed();                                                      
-    grayscale(image_surface);                                                   
+    //grayscale(image_surface);                                                   
     update_surface(screen_surface, image_surface);                              
     wait_for_keypressed();
-    contrast(image_surface,10);
+    //contrast(image_surface,10);
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
-    invert(image_surface);
+    //invert(image_surface);
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
-    brightness(image_surface);
+    //brightness(image_surface);
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
-    median_filter(image_surface);
+    //median_filter(image_surface);
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
     //aver_filter(image_surface);
@@ -40,16 +41,16 @@ int main(){
     otsu_tresholding(image_surface);
     //update_surface(screen_surface, image_surface);
     //wait_for_keypressed();
-    binarize(image_surface);
+    //binarize(image_surface);
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
-    invert(image_surface);
+    //invert(image_surface);
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
     //List *lines=initList();
     //lines=hough_transform(image_surface,image_surface2);
     //Line_sort(lines,30, image_surface);
-    houghTransformation(image_surface);
+    //houghTransformation(image_surface);
     update_surface(screen_surface, image_surface);
     //SDL_Surface* image;
 

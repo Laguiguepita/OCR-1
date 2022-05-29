@@ -1,13 +1,14 @@
 #include <math.h>                                                               
 #include <stdio.h>                                                              
 #include <stdlib.h>                                                             
-#include "sdl_functions.h"                                                      
+//#include "sdl_functions.h"                                                      
                                                                                 
-#include "pixel_operations.h"                                                   
+//#include "pixel_operations.h"     
+#include "../Pretreatment/image_operations.h"                                              
 #include "SDL/SDL_image.h"                                                      
 #include "SDL/SDL.h"
 #include "segmentation.h"									                                                            
-int main(){
+int main_test2(){
     SDL_Surface* image_surface;                                                 
     SDL_Surface* screen_surface;                                                
                                                                                 
@@ -18,7 +19,7 @@ int main(){
                                                                                 
     wait_for_keypressed();
     //Uint32 red = SDL_MapRGB(image_surface->format,255,0,0);                                                      
-    draw_line(image_surface,0,0,1000,1000);                                                   
+    //draw_line(image_surface,0,0,1000,1000);                                                   
     //wait_for_keypressed();
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();

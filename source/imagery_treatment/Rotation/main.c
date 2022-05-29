@@ -5,8 +5,8 @@
 #include<SDL/SDL_image.h>                                                       
 #include<string.h>
 #include"manual_rotation.h"
-int main(){                                                                     
-        SDL_Surface *image;                                                     
+void main_rot(){                                                                     
+    /*    SDL_Surface *image;                                                     
         char path[255];                                                         
         double angle;                                                           
         printf("Donnez le nom de l'image ainsi que son path\n");                
@@ -23,5 +23,5 @@ int main(){
         SDL_FreeSurface(rotated);                                               
         SDL_FreeSurface(image);                                                 
         SDL_Quit();                                                             
-        return 0;                                                               
+        return 0;      */                                                         
 }

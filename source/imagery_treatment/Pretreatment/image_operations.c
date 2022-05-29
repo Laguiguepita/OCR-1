@@ -8,7 +8,6 @@
 //Basic usefull functions with SDL
 
 ////////////Pixel operations and functions/////////////////
-
 static inline
 Uint8* pixel_ref(SDL_Surface *surf, unsigned x, unsigned y)
 {
@@ -190,27 +189,26 @@ void copy_surface(SDL_Surface* img, SDL_Surface* img2)
 			put_pixel(img2, i, k, pixel);
 		}
 }
-
-void Create_image(char *name, long width, long height, int red,
-		int green, int blue)
-{
-	SDL_Surface* img;
-	img = SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0);
-	Uint8 r = red;
-	Uint8 g = green;
-	Uint8 b = blue;
-	SDL_FillRect(img, NULL, SDL_MapRGB(img->format, r, g, b));
-	printf("Surface create : Done\n");
-	Save_Image(img, name);
-	SDL_FreeSurface(img);
-}
-
-void copy(char* path_img, char* path_toCopy)
-{
-	// initialize
-	SDL_Surface* toCopy = load_image(path_toCopy);
-	Save_Image(toCopy, path_img);
-
-	// free
-	SDL_FreeSurface(toCopy);
+void Create_image(char *name, long width, long height, int red,                 
+                int green, int blue)                                            
+{                                                                               
+        SDL_Surface* img;                                                       
+        img = SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0);           
+        Uint8 r = red;                                                          
+        Uint8 g = green;                                                        
+        Uint8 b = blue;                                                         
+        SDL_FillRect(img, NULL, SDL_MapRGB(img->format, r, g, b));              
+        printf("Surface create : Done\n");                                      
+        Save_Image(img, name);                                                  
+        SDL_FreeSurface(img);                                                   
+}                                                                               
+                                                                                
+void copy(char* path_img, char* path_toCopy)                                    
+{                                                                               
+        // initialize                                                           
+        SDL_Surface* toCopy = load_image(path_toCopy);                          
+        Save_Image(toCopy, path_img);                                           
+                                                                                
+        // free                                                                 
+        SDL_FreeSurface(toCopy);                                                
 }

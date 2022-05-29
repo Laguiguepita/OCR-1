@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <math.h>
 
-int main(){
+int main_net(){
 	//Network* network;
 	/*for(int i = 1; i < argc; i++){
 		if(strcmp("-g", argv[i]) == 0){

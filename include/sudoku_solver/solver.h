@@ -1,5 +1,5 @@
-#ifndef SOLVER_SDK_H
-#define SOLVER_SDK_H
+#ifndef SOLVER_H
+#define SOLVER_H
 
 
 

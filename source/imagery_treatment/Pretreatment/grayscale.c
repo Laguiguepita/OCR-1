@@ -1,8 +1,9 @@
 #include <err.h>
 #include "SDL/SDL.h"
+#include "image_operations.h"  
 #include "SDL/SDL_image.h"
-#include "pixel_operations.h"
-#include "sdl_functions.h"
+//#include "pixel_operations.h"
+//#include "sdl_functions.h"
 
 void grayscale(char *path){
 	SDL_Surface *image_surface;

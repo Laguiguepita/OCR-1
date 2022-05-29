@@ -88,7 +88,7 @@ void list_to_file(struct list *list, int matrix[])
 
 void main_from() {
 	int* sudoku= calloc(81, sizeof(int));
-	char path[] = "cell/";
+	char path[] = "../imagery_treatment/Pretreatment/cells/";
 	printf("1\n");
 	list_to_file(cell_to_list(path), sudoku);
 	free(sudoku);

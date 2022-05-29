@@ -177,26 +177,21 @@ void file_to_matrix(char *path, int *matrice)
 
 
 
-int main(int argc, char** argv)
+void main_solver()
 {
-	if (argc != 2) {
-		printf("main: please input one file name\n");
-	}
-	else
-	{
-		char *path = argv[1];
+		char *path = "Solve/sudoku_unsolved";
 		int* sudoku= calloc(81, sizeof(int));
 		file_to_matrix(path, sudoku);
 		
 		if(fillSudoku(sudoku, 0, 0))
 		{
 			matrix_to_file(sudoku,path);
+			printSudoku(sudoku);
 		}
 		else{
 			printf("Invalid Sudoku\n");
 		}
 		free(sudoku);
-	}
-	return 0;
+	
 
 }

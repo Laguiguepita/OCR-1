@@ -1,13 +1,13 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "sdl_functions.h"
+//#include "sdl_functions.h"
 #include <err.h>
-#include "pixel_operations.h"
+//#include "pixel_operations.h"
 #include "SDL/SDL_image.h"
 #include "SDL/SDL.h"
 #include "segmentation.h"
-
+#include "../Pretreatment/image_operations.h"
 #define PI 3.14159265358979
 void houghTransformation(char *path)
 {

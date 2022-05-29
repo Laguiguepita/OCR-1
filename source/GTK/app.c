@@ -5,9 +5,9 @@
 
 #include "../imagery_treatment/Hough/hough.h"
 #include "../imagery_treatment/Hough/segmentation.h"
-#include "../imagery_treatment/Pretreatment/pixel_operations.h"
+//#include "../imagery_treatment/Pretreatment/pixel_operations.h"
 #include "../imagery_treatment/Pretreatment/image_operations.h"
-#include "../imagery_treatment/Pretreatment/sdl_functions.h"
+//#include "../imagery_treatment/Pretreatment/sdl_functions.h"
 #include "../imagery_treatment/Pretreatment/grayscale.h"
 #include "../imagery_treatment/Pretreatment/pretreatment_color.h"
 #include "../imagery_treatment/Rotation/manual_rotation.h"
@@ -380,7 +380,7 @@ void on_slide(GtkScale *scale)
 	rotation %= 360;
 	if(rotation != 0)
 	{
-		Rotate_manual(image_treatment_rotation, rotation);
+		manual_rotation(image_treatment_rotation, (double)rotation);
 	}
 	else
 	{

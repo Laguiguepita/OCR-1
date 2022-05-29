@@ -1,6 +1,6 @@
 #ifndef SEGMENTATION_H
 #define SEGMENTATION_H
-#include "sdl_functions.h"
+#include "../Pretreatment/image_operations.h"
 typedef struct Line_t
 {
     int *x1;
@@ -21,7 +21,7 @@ typedef struct
 
 List *initList();
 void append(List *list, Line *ligne);
-List *hough_transform(SDL_Surface *image, SDL_Surface *image_cp);
+List *hough_transform(SDL_Surface *image);
 Line *initLine(int *x1,int *y1,int *x2, int *y2);
 void Line_sort(List *list,int max, SDL_Surface *image);
 void detect2(char path[]);

@@ -1,13 +1,14 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "sdl_functions.h"
+//#include "sdl_functions.h"
 #include <err.h>
-#include "pixel_operations.h"
+//#include "pixel_operations.h"
 #include "SDL/SDL_image.h"
 #include "SDL/SDL.h"
 #include "segmentation.h"
 #include "string.h"
+#include "../Pretreatment/image_operations.h"  
 #include<SDL/SDL_rotozoom.h>  
 #define PI 3.14159265358979
 
@@ -59,7 +60,7 @@ unsigned int **initMatrix(unsigned int x, unsigned int y)
     return matrice;
 }
 
-List *hough_transform(SDL_Surface *image,SDL_Surface *image_cp){
+List *hough_transform(SDL_Surface *image){
 	int width=image->w;
 	int height=image->h;
 	//SDL_Surface *copy_image=image;
@@ -244,7 +245,7 @@ List *hough_transform(SDL_Surface *image,SDL_Surface *image_cp){
 				printf("%d\n",x2);
 				printf("%d\n",y2);
 				printf("test7\n");
-                    		draw_line(image_cp,x1,y1,x2,y2);
+//                    		draw_line(image_cp,x1,y1,x2,y2);
 				int *x=&x1,*y=&y1,*xx=&x2,*yy=&y2;
 				Line *line=initLine(x,y,xx,yy);
 				append(line_tab,line);
@@ -336,7 +337,7 @@ void Line_sort(List *list,int max, SDL_Surface *image){
 		//xxl=*xx;
 		//yyl=*yy;
 		printf("caca\n");
-		draw_line(image,xl,yl,xxl,yyl);
+		//draw_line(image,xl,yl,xxl,yyl);
 		printf("caca\n");
 		Line *add=initLine(&xl,&yl,&xxl,&yyl);
 		printf("caca\n");
