@@ -333,6 +333,7 @@ void print_result_GTK(char string_stage[])
 		case 14:
 			// Split
 			strcpy(string_stage, "Split of sudoku: ok");
+			//invert(image_treatment);
 			split(image_treatment);
 			display_image_GTK("Image/final_square.bmp");
 			break;

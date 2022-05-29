@@ -266,7 +266,7 @@ List *hough_transform(SDL_Surface *image){
 }
 
 
-void Line_sort(List *list,int max, SDL_Surface *image){
+void Line_sort(List *list,int max){
 	Line *ligne1=list->head;
 	Line *ligne2=list->head;
 	List *reel_list=initList();

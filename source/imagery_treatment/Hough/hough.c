@@ -156,7 +156,7 @@ void houghTransformation(char *path)
     //SDL_FreeSurface(intersection);
     //SDL_FreeSurface(image);
     //SDL_FreeSurface(houghSpace);
-    SDL_SaveBMP(image,path);
+    Save_Image(image,path);
 }
 int* right_corner(SDL_Surface *image,int i,int j,int height,int* length){
 		

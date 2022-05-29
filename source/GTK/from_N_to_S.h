@@ -4,7 +4,8 @@
 
 struct list
 {
-	char name[50];
+	char name[7];
+	size_t size;
 };
 
 

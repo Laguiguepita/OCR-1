@@ -11,7 +11,10 @@ SRC = ${wildcard *.c} ${wildcard ../imagery_treatment/*.c}\
 	 ${wildcard ../imagery_treatment/Pretreatment/*.c}\
 	 ${wildcard ../imagery_treatment/Hough/*.c}\
 	 ${wildcard ../imagery_treatment/Rotation/*.c}\
-	 ${wildcard ../neural_network/*.c}\
+	 ${wildcard ../neural_network/data_set.c}\
+	 ${wildcard ../neural_network/save_and_load.c}\
+	 ${wildcard ../neural_network/neural_network.c}\
+	 ${wildcard ../neural_network/XOR.c}\
 	 ${wildcard ../neural_network/*/*.c}\
 	 ${wildcard ../sudoku_solver/*.c}\
 

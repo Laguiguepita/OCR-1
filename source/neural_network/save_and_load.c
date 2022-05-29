@@ -43,7 +43,7 @@ void saveNetwork(Network* network, char name[]){
 Network* loadNetwork(char name[]){
 	// try to open the file
 	FILE* file = NULL;
-	char destination[60] = "saves/";
+	char destination[60] = "../neural_network/saves/";
 	strcat(destination, name);
 	file = fopen(destination, "r");
 	if(file == NULL){

@@ -23,7 +23,7 @@ List *initList();
 void append(List *list, Line *ligne);
 List *hough_transform(SDL_Surface *image);
 Line *initLine(int *x1,int *y1,int *x2, int *y2);
-void Line_sort(List *list,int max, SDL_Surface *image);
+void Line_sort(List *list,int max);
 void detect2(char path[]);
 int isTache(SDL_Surface *img);
 void resize(char path[]);

@@ -9,6 +9,7 @@
 #include "../../include/sudoku_solver/solver.h"
 #include "../imagery_treatment/Pretreatment/image_operations.h"
 #include "../imagery_treatment/Hough/segmentation.h"
+#include "../imagery_treatment/Pretreatment/pretreatment_color.h"
 
 
 struct list *cell_to_list(char path[])
@@ -22,22 +23,25 @@ struct list *cell_to_list(char path[])
 		return 0;
 	}
 	
-		
-	
-	struct list *p = malloc(sizeof(char)*6);
 	size_t i = 0;
+
+	struct list *p = malloc(sizeof(char)*7);
+
 	while ((de = readdir(dr)) != NULL)
 		{
 			if (de->d_name[0] != '.')
 				{
 					for (int j = 0; j < 6; j++)
+					{
 						p[i].name[j] = de->d_name[j];
-					
+						
+					}
+					p[i].name[6] = '\0';
 					i++;
 				}
 		}
-	p[i+1].name[0] = '\0';
-	
+	printf("%ld", i);
+	p[0].size = i;
 	printf("2\n");
 	closedir(dr);
 	
@@ -49,12 +53,20 @@ struct list *cell_to_list(char path[])
 double* auxiliaire(char path[])
 {
 	SDL_Surface *img;
-	img = load_image(path);
+	char cell[13] = "cells/";
+	
+	for (size_t j = 0; j < 6; j++)
+	{
+		cell[6+j] = path[j];
+	}
+	cell[12] = '\0';
+
+	img = load_image(cell);
 	double *p = calloc (784,sizeof(double));
 	
 	for (size_t i = 0; i < 28; i++)
 			for (size_t j = 0; j < 28; j++)
-		p[i*28+j] = (double)get_pixel(img, i, j);
+				p[i*28+j] = (double)get_pixel(img, i, j);
 
 	return p;
 	
@@ -69,17 +81,27 @@ void list_to_file(struct list *list, int matrix[])
 	size_t i = 0;
 	
 	int nombre;
-	
+	int test;
 	printf("3\n");
-	Network *network = loadNetwork("../neural_network/saves/test1");
+	Network *network = loadNetwork("test2");
 	printf("3,5\n");
-	while(list[i].name[0] != '\0')
+	while(i < list[0].size)
 	{
-		nombre = (list[i].name[5] - '0') * 10 + (list[i].name[6] - '0');
-		
-		matrix[nombre] = front_propagation(network, auxiliaire(list[i].name));
+		nombre = (list[i].name[4] - '0') * 10 + (list[i].name[5] - '0');
+		//printf("%ld, %s, %d\n", i, list[i].name, nombre);	
+		test = front_propagation(network, auxiliaire(list[i].name));
+
+		for (int k = 0; k < 10; k++)
+			{
+				printf("%d, %f", k, network->layers[network->nb_layers-1]->neurons[k]->activation);
+			}
+
+		//printf("%d, %s\n", test, list[i].name);
+		matrix[nombre] = test;
 		i++;
 	}
+	
+	printSudoku(matrix);
 	matrix_to_file(matrix, "Solve/sudoku_unsolved");
 	
 	freeNetwork(network);
@@ -90,11 +112,15 @@ void list_to_file(struct list *list, int matrix[])
 
 void main_from() {
 	int* sudoku= calloc(81, sizeof(int));
-	char path[] = "../imagery_treatment/Pretreatment/cells/";
+	char path[] = "cells/";
 	printf("1\n");
 	list_to_file(cell_to_list(path), sudoku);
 	free(sudoku);
 }
+
+
+
+
 void split(char *path){                                                         
                                                                                  
          SDL_Surface *img;                                                       
@@ -123,8 +149,9 @@ void split(char *path){
 		 cell[12] = '\0';                                              
 
                  if (isTache(imagedest) == 1){
-			Save_Image(imagedest,cell);                            
-                         resize(cell);                                           
+			Save_Image(imagedest,cell);
+			invert(imagedest);
+                        resize(cell);                                           
                  }                                                               
                                                                                 
                                                                                  
@@ -142,5 +169,39 @@ void split(char *path){
                                                                                 
          }                                                                       
                                                                                  
-}                                                                               
+}
+
+
+
+void clean(char path[])
+{
+	SDL_Surface *img;
+	init_sdl();
+	img = load_image();
+
+	int taille = 5;
+	
+	
+
+	for (int i = 0; i < img->w; i++)
+	{
+		for (int j = 0; j < img->h; j++)
+		{
+			if (i < taille || j < taille || i < img->w-taille || j < img->h-taille)
+			{
+				
+				 put_pixel(img, i, j, 0);
+			}
+		}
+	}
+
+	Save_Image(img, path);
+
+
+
+
+}
+
+
+
          
