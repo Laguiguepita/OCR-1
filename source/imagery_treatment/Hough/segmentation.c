@@ -368,11 +368,9 @@ void detect2(char *path){
 	img = load_image(path);
 
 	//printf("%s", path);	
-	int len = strlen(path);
+	int len = strlen(path);	
 	
-	printf("\n%d\n", path[len-6]);
-
-	if(path[len-6] == '4')
+	if(path[len-1] == 'p')
 	{
 		printf("yes");
 		size_t length = 440;	
