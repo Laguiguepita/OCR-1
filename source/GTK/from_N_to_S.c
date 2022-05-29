@@ -214,18 +214,16 @@ void clean(char path[])
 	init_sdl();
 	img = load_image(path);
 
-	int taille = 5;
-	
-	
+	int taille = 10;	
 
 	for (int i = 0; i < img->w; i++)
 	{
 		for (int j = 0; j < img->h; j++)
 		{
-			if (i < taille || j < taille || i < img->w-taille || j < img->h-taille)
+			if (i < taille || j < taille || i > img->w-taille || j > img->h-taille)
 			{
 				
-				 put_pixel(img, i, j, 0);
+				 put_pixel(img, i, j, 255);
 			}
 		}
 	}

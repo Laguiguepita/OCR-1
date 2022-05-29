@@ -326,16 +326,17 @@ void print_result_GTK(char string_stage[])
 			break;
 		case 13:
 			// Black and white
-			strcpy(string_stage, "Black and white: ok");
+			strcpy(string_stage, "Detect: ok");
 			//Filter_step(image_result, 7);
+			detect2(image_treatment);
 			display_image_GTK(image_treatment);
 			break;
 		case 14:
 			// Split
 			strcpy(string_stage, "Split of sudoku: ok");
 			//invert(image_treatment);
+			display_image_GTK(image_treatment);
 			split(image_treatment);
-			display_image_GTK("Image/final_square.bmp");
 			break;
 		case 15:
 			// Get_grid and display it
@@ -343,7 +344,7 @@ void print_result_GTK(char string_stage[])
 			//print_sudoku_unsolved(image_result, unsolved, "./cell/");
 			main_from();
 			main_solver();
-			display_image_GTK("../imagery_treatment/sudoku/empty_sudoku.jpg");
+			display_image_GTK("Print/empty_sudoku.jpg");
 			break;
 		case 16:
 			// Solver
@@ -355,6 +356,7 @@ void print_result_GTK(char string_stage[])
 			// Activate save button
 			gtk_widget_set_sensitive(save, TRUE);
 			break;
+		
 		default:
 			strcpy(string_stage, "");
 	}

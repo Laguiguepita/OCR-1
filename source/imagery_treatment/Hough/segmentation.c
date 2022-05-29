@@ -366,9 +366,15 @@ void detect2(char *path){
 	SDL_Surface *img;
 	init_sdl();
 	img = load_image(path);
+
+	//printf("%s", path);	
+	int len = strlen(path);
 	
-	if(strlen(path) == strlen("Image/sudoku_044.bmp"))
+	printf("\n%d\n", path[len-6]);
+
+	if(path[len-6] == '4')
 	{
+		printf("yes");
 		size_t length = 440;	
 		size_t valx = 160;
 		size_t valy = 60;
@@ -379,7 +385,7 @@ void detect2(char *path){
                         	put_pixel(imagedest,x1,x2,pixel);                       
                  	}                                                               
 		}
-		SDL_SaveBMP(imagedest,"Image/final_square.bmp");
+		Save_Image(imagedest,"Image/final_square.bmp");
 	}
 	else{	
 		size_t valx = 0;
@@ -414,7 +420,7 @@ void detect2(char *path){
                         	put_pixel(imagedest,x1,x2,pixel);                       
                  	}                                                               
 		}
-		SDL_SaveBMP(imagedest,"Image/final_square.bmp");
+		Save_Image(imagedest,"Image/final_square.bmp");
 	}
 
 

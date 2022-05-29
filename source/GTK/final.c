@@ -17,23 +17,23 @@ void print_numb2(SDL_Surface *img, size_t x, size_t y, int number)
 			init_sdl();
 			
 			if (number == 1)
-				n = load_image("../sudoku_solver/Print/n1.png");
+				n = load_image("Print/n1.png");
 			else if (number == 2)
-				n = load_image("../sudoku_solver/Print/n2.png");
+				n = load_image("Print/n2.png");
 			else if (number == 3)
-				n = load_image("../sudoku_solver/Print/n3.png");
+				n = load_image("Print/n3.png");
 			else if (number == 4)
-				n = load_image("../sudoku_solver/Print/n4.png");
+				n = load_image("Print/n4.png");
 			else if (number == 5)
-				n = load_image("../sudoku_solver/Print/n5.png");
+				n = load_image("Print/n5.png");
 			else if (number == 6)
-				n = load_image("../sudoku_solver/Print/n6.png");
+				n = load_image("Print/n6.png");
 			else if (number == 7)
-				n = load_image("../sudoku_solver/Print/n7.png");
+				n = load_image("Print/n7.png");
 			else if (number == 8)
-				n = load_image("../sudoku_solver/Print/n8.png");
+				n = load_image("Print/n8.png");
 			else
-				n = load_image("../sudoku_solver/Print/n9.png");
+				n = load_image("Print/n9.png");
 			
 			size_t h = n->h;
 			size_t w = n->w;
@@ -99,7 +99,7 @@ void main_final() {
 	printf("oui");
 	SDL_Surface *img;
 	init_sdl();
-	img = load_image("../imagery_treatment/sudoku/empty_sudoku.jpg");
+	img = load_image("Print/empty_sudoku.jpg");
 	ouiJeLA(sudoku, img);
 	free(sudoku);
 	free(img);
